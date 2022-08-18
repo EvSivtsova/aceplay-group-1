@@ -61,3 +61,27 @@ tickets:
       Implement the functionality to do so and comment here documenting the
       endpoint you have created. This information will be handed to the
       front-end team who will implement based on your description.
+
+  - title: Organise the application to separate concerns even more
+    description: |
+      The application lacks a meaningful separation between some of its layers.
+
+      Amend the application to follow typical Spring layers and MVC pattern 
+      more closely.
+
+      ```
+      Research Spring @Component, @Service
+      ```
+
+  - title: Implement track suggestions
+    description: |
+      The user shall see a list of suggested tracks that might want to
+      add to his library.
+
+      The tracks suggested shall be tracks not currently associated with 
+      the user. The popularity of a track is determined by the number 
+      of playlists of other users is associated with. The response 
+      shall be in order of popularity to a maximum of 10.
+
+      Implement the functionality to do so and comment here documenting the
+      endpoint you have created.
