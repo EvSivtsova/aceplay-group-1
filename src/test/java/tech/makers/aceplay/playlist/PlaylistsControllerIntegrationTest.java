@@ -11,9 +11,12 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.web.server.ResponseStatusException;
 import tech.makers.aceplay.track.Track;
 import tech.makers.aceplay.track.TrackRepository;
 
+import javax.xml.bind.ValidationException;
+import java.util.Objects;
 import java.util.Set;
 
 import static org.hamcrest.Matchers.hasSize;
@@ -167,8 +170,8 @@ class PlaylistsControllerIntegrationTest {
                       .contentType(MediaType.APPLICATION_JSON)
                       .content("{\"name\": \"\"}"))
               .andExpect(status().isBadRequest())
-              .andExpect(result -> assertTrue(result.getResolvedException() instanceof Exception))
-              .andExpect(result -> assertEquals("Playlist name is empty.", result.getResolvedException().getMessage()));
+              .andExpect(result -> assertTrue(result.getResolvedException() instanceof IllegalArgumentException))
+              .andExpect(result -> assertEquals("Playlist name cannot be empty", Objects.requireNonNull(result.getResolvedException()).getMessage()));
 
       assertNull(repository.findFirstByOrderByIdAsc());
     }
