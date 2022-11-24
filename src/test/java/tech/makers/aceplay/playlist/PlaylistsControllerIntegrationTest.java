@@ -158,4 +158,18 @@ class PlaylistsControllerIntegrationTest {
     assertEquals(track.getId(), includedTrack.getId());
     assertEquals("Title", includedTrack.getTitle());
   }
+
+    @Test
+  @WithMockUser
+  void testPlaylistIsNotSavedToDatabase_WhenEmptyName() throws Exception {
+      mvc.perform(
+              MockMvcRequestBuilders.post("/api/playlists")
+                      .contentType(MediaType.APPLICATION_JSON)
+                      .content("{\"name\": \"\"}"))
+              .andExpect(status().isBadRequest())
+              .andExpect(result -> assertTrue(result.getResolvedException() instanceof Exception))
+              .andExpect(result -> assertEquals("Playlist name is empty.", result.getResolvedException().getMessage()));
+
+      assertNull(repository.findFirstByOrderByIdAsc());
+    }
 }
