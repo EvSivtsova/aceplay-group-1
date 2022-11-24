@@ -1,6 +1,9 @@
 package tech.makers.aceplay.playlist;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 import tech.makers.aceplay.track.Track;
@@ -20,8 +23,17 @@ public class PlaylistsController {
     return playlistRepository.findAll();
   }
 
+  // Need to refactor this into new class
+  @ExceptionHandler(RuntimeException.class)
+  public ResponseEntity<String> handleError(RuntimeException ex) {
+    return new ResponseEntity<>(ex.getMessage(), new HttpHeaders(), HttpStatus.BAD_REQUEST);
+  }
+
   @PostMapping("/api/playlists")
   public Playlist create(@RequestBody Playlist playlist) {
+    if (playlist.getName() == "")
+      throw new RuntimeException("Playlist name is empty.");
+
     return playlistRepository.save(playlist);
   }
 
