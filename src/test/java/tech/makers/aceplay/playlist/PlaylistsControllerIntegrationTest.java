@@ -196,4 +196,15 @@ class PlaylistsControllerIntegrationTest {
                     MockMvcRequestBuilders.delete("/api/playlists/1"))
             .andExpect(status().isNotFound());
   }
+
+  @Test
+  void test_WhenLoggedOUT_DeletePlaylist_IsForbidden() throws Exception {
+    Playlist playlist = repository.save(new Playlist("Dance music"));
+
+    mvc.perform(
+                    MockMvcRequestBuilders.delete("/api/playlists/" + playlist.getId()))
+            .andExpect(status().isForbidden());
+
+    assertEquals(1, repository.count());
+  }
 }
