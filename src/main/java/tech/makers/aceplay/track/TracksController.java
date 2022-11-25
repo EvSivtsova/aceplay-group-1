@@ -19,11 +19,6 @@ public class TracksController {
     return trackRepository.findAll();
   }
 
-  @ExceptionHandler(IllegalArgumentException.class)
-  public ResponseEntity<String> handleError(RuntimeException ex) {
-    return new ResponseEntity<>(ex.getMessage(), new HttpHeaders(), HttpStatus.BAD_REQUEST);
-  }
-
   @PostMapping("/api/tracks")
   public Track create(@RequestBody Track track) {
     if (track.getTitle().equals(""))
