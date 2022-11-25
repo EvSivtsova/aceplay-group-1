@@ -16,10 +16,7 @@ import tech.makers.aceplay.track.Track;
 import tech.makers.aceplay.track.TrackRepository;
 
 import javax.xml.bind.ValidationException;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
-import java.util.SortedSet;
+import java.util.*;
 
 import static org.hamcrest.Matchers.hasSize;
 import static org.junit.jupiter.api.Assertions.*;
@@ -199,9 +196,9 @@ class PlaylistsControllerIntegrationTest {
     Playlist updatedPlaylist = repository.findById(playlist.getId()).orElseThrow();
 
     assertEquals(2, updatedPlaylist.getTracks().size());
-    SortedSet<PlaylistTrack> includedTracks = updatedPlaylist.getTracks();
-    assertEquals(originalTrack.getId(), includedTracks.first().getTrack().getId());
-    assertEquals(newTrack.getId(), includedTracks.last().getTrack().getId());
+    PlaylistTrack[] includedTracks = updatedPlaylist.getTracks().toArray(PlaylistTrack[]::new);
+    assertEquals(originalTrack.getId(), includedTracks[0].getTrack().getId());
+    assertEquals(newTrack.getId(), includedTracks[1].getTrack().getId());
   }
 
   @Test
