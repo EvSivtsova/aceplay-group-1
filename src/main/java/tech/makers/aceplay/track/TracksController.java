@@ -15,7 +15,7 @@ public class TracksController {
 
   @GetMapping("/api/tracks")
   public Iterable<Track> index() {
-    return trackRepository.findAll();
+    return tracksService.index();
   }
 
   @PostMapping("/api/tracks")
@@ -25,20 +25,11 @@ public class TracksController {
 
   @PatchMapping("/api/tracks/{id}")
   public Track update(@PathVariable Long id, @RequestBody Track newTrack) {
-    Track track = trackRepository
-            .findById(id)
-            .orElseThrow(() -> new ResponseStatusException(NOT_FOUND, "No track exists with id " + id));
-    track.setTitle(newTrack.getTitle());
-    track.setArtist(newTrack.getArtist());
-    trackRepository.save(track);
-    return track;
+    return tracksService.updateTrack(id, newTrack);
   }
 
   @DeleteMapping("/api/tracks/{id}")
   public void delete(@PathVariable Long id) {
-    Track track = trackRepository
-            .findById(id)
-            .orElseThrow(() -> new ResponseStatusException(NOT_FOUND, "No track exists with id " + id));
-    trackRepository.delete(track);
+    tracksService.deleteTrack(id);
   }
 }
