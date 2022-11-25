@@ -1,9 +1,6 @@
 package tech.makers.aceplay.track;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -14,6 +11,8 @@ import static org.springframework.http.HttpStatus.NOT_FOUND;
 public class TracksController {
   @Autowired private TrackRepository trackRepository;
 
+  @Autowired private TracksService tracksService;
+
   @GetMapping("/api/tracks")
   public Iterable<Track> index() {
     return trackRepository.findAll();
@@ -21,13 +20,7 @@ public class TracksController {
 
   @PostMapping("/api/tracks")
   public Track create(@RequestBody Track track) {
-    if (track.getTitle().equals(""))
-      throw new IllegalArgumentException("Track title cannot be empty");
-
-    if (track.getArtist().equals(""))
-      throw new IllegalArgumentException("Track artist cannot be empty");
-
-    return trackRepository.save(track);
+      return tracksService.validateAndSaveTrack(track);
   }
 
   @PatchMapping("/api/tracks/{id}")
