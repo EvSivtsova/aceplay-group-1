@@ -188,4 +188,12 @@ class PlaylistsControllerIntegrationTest {
 
     assertEquals(0, repository.count());
   }
+
+  @Test
+  @WithMockUser
+  void test_WhenLoggedIn_ButNoPlaylist_DeletePlaylist_Throws404() throws Exception {
+    mvc.perform(
+                    MockMvcRequestBuilders.delete("/api/playlists/1"))
+            .andExpect(status().isNotFound());
+  }
 }
