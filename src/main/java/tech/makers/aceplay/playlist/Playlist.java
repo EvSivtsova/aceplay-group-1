@@ -1,10 +1,8 @@
 package tech.makers.aceplay.playlist;
 
 import com.fasterxml.jackson.annotation.JsonGetter;
-import tech.makers.aceplay.track.Track;
-
 import javax.persistence.*;
-import java.util.Set;
+import java.util.*;
 
 // https://www.youtube.com/watch?v=vreyOZxdb5Y&t=448s
 @Entity
@@ -15,18 +13,13 @@ public class Playlist {
 
   private String name;
 
-  @ManyToMany(fetch = FetchType.EAGER)
-  private Set<Track> tracks;
+  @OneToMany(mappedBy = "playlist", fetch = FetchType.EAGER)
+  private Set<PlaylistTrack> tracks = new HashSet<>();
 
   public Playlist() {}
 
   public Playlist(String name) {
-    this(name, null);
-  }
-
-  public Playlist(String name, Set<Track> tracks) {
     this.name = name;
-    this.tracks = tracks;
   }
 
   public String getName() {
@@ -42,15 +35,20 @@ public class Playlist {
   }
 
   @JsonGetter("tracks")
-  public Set<Track> getTracks() {
-    if (null == tracks) {
-      return Set.of();
-    }
-    return tracks;
+  public SortedSet<PlaylistTrack> getTracks() {
+    SortedSet<PlaylistTrack> orderedTracks = new TreeSet<>(new AscendingTrack());
+    orderedTracks.addAll(tracks);
+    return orderedTracks;
   }
 
   @Override
   public String toString() {
     return String.format("Playlist[id=%d name='%s']", id, name);
+  }
+}
+
+class AscendingTrack implements Comparator<PlaylistTrack> {
+  public int compare(PlaylistTrack track1, PlaylistTrack track2) {
+    return track1.getAddedAt().compareTo(track2.getAddedAt());
   }
 }
