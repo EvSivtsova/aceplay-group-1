@@ -14,6 +14,7 @@ public class Playlist {
   private String name;
 
   @OneToMany(mappedBy = "playlist", fetch = FetchType.EAGER)
+  @OrderBy("addedAt")
   private Set<PlaylistTrack> tracks = new HashSet<>();
 
   public Playlist() {}
@@ -35,20 +36,12 @@ public class Playlist {
   }
 
   @JsonGetter("tracks")
-  public SortedSet<PlaylistTrack> getTracks() {
-    SortedSet<PlaylistTrack> orderedTracks = new TreeSet<>(new AscendingTrack());
-    orderedTracks.addAll(tracks);
-    return orderedTracks;
+  public Set<PlaylistTrack> getTracks() {
+    return tracks;
   }
 
   @Override
   public String toString() {
     return String.format("Playlist[id=%d name='%s']", id, name);
-  }
-}
-
-class AscendingTrack implements Comparator<PlaylistTrack> {
-  public int compare(PlaylistTrack track1, PlaylistTrack track2) {
-    return track1.getAddedAt().compareTo(track2.getAddedAt());
   }
 }
