@@ -9,6 +9,10 @@ import org.springframework.web.server.ResponseStatusException;
 import tech.makers.aceplay.track.Track;
 import tech.makers.aceplay.track.TrackRepository;
 
+import javax.xml.bind.ValidationException;
+import java.util.Objects;
+
+import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 
 // https://www.youtube.com/watch?v=vreyOZxdb5Y&t=0s
@@ -24,16 +28,15 @@ public class PlaylistsController {
   }
 
   // Need to refactor this into new class
-  @ExceptionHandler(RuntimeException.class)
+  @ExceptionHandler(IllegalArgumentException.class)
   public ResponseEntity<String> handleError(RuntimeException ex) {
     return new ResponseEntity<>(ex.getMessage(), new HttpHeaders(), HttpStatus.BAD_REQUEST);
   }
 
   @PostMapping("/api/playlists")
   public Playlist create(@RequestBody Playlist playlist) {
-    if (playlist.getName() == "")
-      throw new RuntimeException("Playlist name is empty.");
-
+    if (playlist.getName().equals(""))
+      throw new IllegalArgumentException("Playlist name cannot be empty");
     return playlistRepository.save(playlist);
   }
 
