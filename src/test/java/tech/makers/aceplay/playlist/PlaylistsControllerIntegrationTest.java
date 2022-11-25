@@ -16,8 +16,10 @@ import tech.makers.aceplay.track.Track;
 import tech.makers.aceplay.track.TrackRepository;
 
 import javax.xml.bind.ValidationException;
+import java.util.List;
 import java.util.Objects;
 import java.util.Set;
+import java.util.SortedSet;
 
 import static org.hamcrest.Matchers.hasSize;
 import static org.junit.jupiter.api.Assertions.*;
@@ -35,6 +37,8 @@ class PlaylistsControllerIntegrationTest {
   @Autowired private TrackRepository trackRepository;
 
   @Autowired private PlaylistRepository repository;
+
+  @Autowired private PlaylistTrackRepository playlistTrackRepository;
 
   @Test
   void WhenLoggedOut_PlaylistsIndexReturnsForbidden() throws Exception {
@@ -55,7 +59,8 @@ class PlaylistsControllerIntegrationTest {
   @WithMockUser
   void WhenLoggedIn_AndThereArePlaylists_PlaylistIndexReturnsTracks() throws Exception {
     Track track = trackRepository.save(new Track("Title", "Artist", "https://example.org/"));
-    repository.save(new Playlist("My Playlist", Set.of(track)));
+    Playlist playlist = repository.save(new Playlist("My Playlist"));
+    PlaylistTrack playlistTrack = playlistTrackRepository.save(new PlaylistTrack(playlist, track));
     repository.save(new Playlist("Their Playlist"));
 
     mvc.perform(MockMvcRequestBuilders.get("/api/playlists").contentType(MediaType.APPLICATION_JSON))
@@ -63,9 +68,9 @@ class PlaylistsControllerIntegrationTest {
         .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
         .andExpect(jsonPath("$", hasSize(2)))
         .andExpect(jsonPath("$[0].name").value("My Playlist"))
-        .andExpect(jsonPath("$[0].tracks[0].title").value("Title"))
-        .andExpect(jsonPath("$[0].tracks[0].artist").value("Artist"))
-        .andExpect(jsonPath("$[0].tracks[0].publicUrl").value("https://example.org/"))
+        .andExpect(jsonPath("$[0].tracks[0].track.title").value("Title"))
+        .andExpect(jsonPath("$[0].tracks[0].track.artist").value("Artist"))
+        .andExpect(jsonPath("$[0].tracks[0].track.publicUrl").value("https://example.org/"))
         .andExpect(jsonPath("$[1].name").value("Their Playlist"));
   }
 
@@ -87,15 +92,16 @@ class PlaylistsControllerIntegrationTest {
   @WithMockUser
   void WhenLoggedIn_AndThereIsAPlaylist_PlaylistGetReturnsPlaylist() throws Exception {
     Track track = trackRepository.save(new Track("Title", "Artist", "https://example.org/"));
-    Playlist playlist = repository.save(new Playlist("My Playlist", Set.of(track)));
+    Playlist playlist = repository.save(new Playlist("My Playlist"));
+    PlaylistTrack playlistTrack = playlistTrackRepository.save(new PlaylistTrack(playlist, track));
 
     mvc.perform(MockMvcRequestBuilders.get("/api/playlists/" + playlist.getId()).contentType(MediaType.APPLICATION_JSON))
         .andExpect(status().isOk())
         .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
         .andExpect(jsonPath("$.name").value("My Playlist"))
-        .andExpect(jsonPath("$.tracks[0].title").value("Title"))
-        .andExpect(jsonPath("$.tracks[0].artist").value("Artist"))
-        .andExpect(jsonPath("$.tracks[0].publicUrl").value("https://example.org/"));
+        .andExpect(jsonPath("$.tracks[0].track.title").value("Title"))
+        .andExpect(jsonPath("$.tracks[0].track.artist").value("Artist"))
+        .andExpect(jsonPath("$.tracks[0].track.publicUrl").value("https://example.org/"));
   }
 
   @Test
@@ -157,12 +163,12 @@ class PlaylistsControllerIntegrationTest {
     Playlist updatedPlaylist = repository.findById(playlist.getId()).orElseThrow();
 
     assertEquals(1, updatedPlaylist.getTracks().size());
-    Track includedTrack = updatedPlaylist.getTracks().stream().findFirst().orElseThrow();
-    assertEquals(track.getId(), includedTrack.getId());
-    assertEquals("Title", includedTrack.getTitle());
+    PlaylistTrack includedTrack = updatedPlaylist.getTracks().stream().findFirst().orElseThrow();
+    assertEquals(track.getId(), includedTrack.getTrack().getId());
+    assertEquals("Title", includedTrack.getTrack().getTitle());
   }
 
-    @Test
+  @Test
   @WithMockUser
   void testPlaylistIsNotSavedToDatabase_WhenEmptyName() throws Exception {
       mvc.perform(
@@ -174,5 +180,27 @@ class PlaylistsControllerIntegrationTest {
               .andExpect(result -> assertEquals("Playlist name cannot be empty", Objects.requireNonNull(result.getResolvedException()).getMessage()));
 
       assertNull(repository.findFirstByOrderByIdAsc());
-    }
+  }
+
+  @Test
+  @WithMockUser
+  void WhenLoggedIn_TracksAreReturnedInOrderAdded() throws Exception {
+    Track originalTrack = trackRepository.save(new Track("Title", "Artist", "https://example.org/"));
+    Playlist playlist = repository.save(new Playlist("My Playlist"));
+    PlaylistTrack playlistTrack = playlistTrackRepository.save(new PlaylistTrack(playlist, originalTrack));
+
+    Track newTrack = trackRepository.save(new Track("Title", "Artist", "https://example.org/"));
+    mvc.perform(
+                    MockMvcRequestBuilders.put("/api/playlists/" + playlist.getId() + "/tracks")
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content("{\"id\": \"" + newTrack.getId() + "\"}"))
+            .andExpect(status().isOk());
+
+    Playlist updatedPlaylist = repository.findById(playlist.getId()).orElseThrow();
+
+    assertEquals(2, updatedPlaylist.getTracks().size());
+    SortedSet<PlaylistTrack> includedTracks = updatedPlaylist.getTracks();
+    assertEquals(originalTrack.getId(), includedTracks.first().getTrack().getId());
+    assertEquals(newTrack.getId(), includedTracks.last().getTrack().getId());
+  }
 }
