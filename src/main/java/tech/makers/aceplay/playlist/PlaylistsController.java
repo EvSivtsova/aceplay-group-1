@@ -29,12 +29,6 @@ public class PlaylistsController {
     return playlistRepository.findAll();
   }
 
-  // Need to refactor this into new class
-  @ExceptionHandler(IllegalArgumentException.class)
-  public ResponseEntity<String> handleError(RuntimeException ex) {
-    return new ResponseEntity<>(ex.getMessage(), new HttpHeaders(), HttpStatus.BAD_REQUEST);
-  }
-
   @PostMapping("/api/playlists")
   public Playlist create(@RequestBody Playlist playlist) {
     if (playlist.getName().equals(""))
