@@ -15,8 +15,11 @@ import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import tech.makers.aceplay.track.Track;
 import tech.makers.aceplay.track.TrackRepository;
 
+import java.util.Objects;
+
 import static org.hamcrest.Matchers.hasSize;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 // https://www.youtube.com/watch?v=L4vkcgRnw2g&t=908s
@@ -76,6 +79,34 @@ class TracksControllerIntegrationTest {
     Track track = repository.findFirstByOrderByIdAsc();
     assertEquals("Blue Line Swinger", track.getTitle());
     assertEquals("https://example.org/track.mp3", track.getPublicUrl().toString());
+  }
+
+  @Test
+  @WithMockUser
+  void TracksAreNotSavedToTheDataBase_WhenTitleIsEmpty() throws Exception {
+    mvc.perform(
+            MockMvcRequestBuilders.post("/api/tracks")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content("{\"title\": \"\", \"artist\": \"Yo La Tengo\", \"publicUrl\": \"https://example.org/track.mp3\"}"))
+            .andExpect(status().isBadRequest())
+            .andExpect(result -> assertTrue(result.getResolvedException() instanceof IllegalArgumentException))
+            .andExpect(result -> assertEquals("Track title cannot be empty", Objects.requireNonNull(result.getResolvedException()).getMessage()));
+
+    assertEquals(0, repository.count());
+  }
+
+  @Test
+  @WithMockUser
+  void TracksAreNotSavedToTheDataBase_WhenArtistIsEmpty() throws Exception {
+    mvc.perform(
+                    MockMvcRequestBuilders.post("/api/tracks")
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content("{\"title\": \"example track\", \"artist\": \"\", \"publicUrl\": \"https://example.org/track.mp3\"}"))
+            .andExpect(status().isBadRequest())
+            .andExpect(result -> assertTrue(result.getResolvedException() instanceof IllegalArgumentException))
+            .andExpect(result -> assertEquals("Track artist cannot be empty", Objects.requireNonNull(result.getResolvedException()).getMessage()));
+
+    assertEquals(0, repository.count());
   }
 
   @Test
