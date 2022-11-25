@@ -22,6 +22,8 @@ public class PlaylistsController {
 
   @Autowired private TrackRepository trackRepository;
 
+  @Autowired private PlaylistTrackRepository playlistTrackRepository;
+
   @GetMapping("/api/playlists")
   public Iterable<Playlist> playlists() {
     return playlistRepository.findAll();
@@ -52,8 +54,8 @@ public class PlaylistsController {
             .orElseThrow(() -> new ResponseStatusException(NOT_FOUND, "No playlist exists with id " + id));
     Track track = trackRepository.findById(trackIdentifierDto.getId())
             .orElseThrow(() -> new ResponseStatusException(NOT_FOUND, "No track exists with id " + trackIdentifierDto.getId()));
-    playlist.getTracks().add(track);
-    playlistRepository.save(playlist);
+    PlaylistTrack playlistTrack = new PlaylistTrack(playlist, track);
+    playlistTrackRepository.save(playlistTrack);
     return track;
   }
 
