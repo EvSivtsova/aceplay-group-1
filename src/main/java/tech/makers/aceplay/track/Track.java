@@ -30,7 +30,7 @@ public class Track {
   public Track(String title, String artist) {
     this.title = title;
     this.artist = artist;
-//    this.publicUrl = publicUrl;
+    this.publicUrl = publicUrl;
   }
 
   public Track(String title, String artist, String publicUrl) throws MalformedURLException {

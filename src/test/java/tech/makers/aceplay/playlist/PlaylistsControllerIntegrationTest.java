@@ -200,4 +200,35 @@ class PlaylistsControllerIntegrationTest {
     assertEquals(originalTrack.getId(), includedTracks[0].getTrack().getId());
     assertEquals(newTrack.getId(), includedTracks[1].getTrack().getId());
   }
+
+  @Test
+  @WithMockUser
+  void WhenLoggedIn_DeletePlaylist_DeletesPlaylist() throws Exception {
+    Playlist playlist = repository.save(new Playlist("Dance music"));
+
+    mvc.perform(
+                    MockMvcRequestBuilders.delete("/api/playlists/" + playlist.getId()))
+            .andExpect(status().isOk());
+
+    assertEquals(0, repository.count());
+  }
+
+  @Test
+  @WithMockUser
+  void WhenLoggedIn_ButNoPlaylist_DeletePlaylist_Throws404() throws Exception {
+    mvc.perform(
+                    MockMvcRequestBuilders.delete("/api/playlists/1"))
+            .andExpect(status().isNotFound());
+  }
+
+  @Test
+  void WhenLoggedOout_DeletePlaylist_IsForbidden() throws Exception {
+    Playlist playlist = repository.save(new Playlist("Dance music"));
+
+    mvc.perform(
+                    MockMvcRequestBuilders.delete("/api/playlists/" + playlist.getId()))
+            .andExpect(status().isForbidden());
+
+    assertEquals(1, repository.count());
+  }
 }
