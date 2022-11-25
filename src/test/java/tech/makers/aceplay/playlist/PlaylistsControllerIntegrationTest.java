@@ -162,7 +162,7 @@ class PlaylistsControllerIntegrationTest {
     assertEquals("Title", includedTrack.getTitle());
   }
 
-    @Test
+  @Test
   @WithMockUser
   void testPlaylistIsNotSavedToDatabase_WhenEmptyName() throws Exception {
       mvc.perform(
@@ -175,4 +175,17 @@ class PlaylistsControllerIntegrationTest {
 
       assertNull(repository.findFirstByOrderByIdAsc());
     }
+
+
+  @Test
+  @WithMockUser
+  void test_WhenLoggedIn_DeletePlaylist_DeletesPlaylist() throws Exception {
+    Playlist playlist = repository.save(new Playlist("Dance music"));
+
+    mvc.perform(
+                    MockMvcRequestBuilders.delete("/api/playlists/" + playlist.getId()))
+            .andExpect(status().isOk());
+
+    assertEquals(0, repository.count());
+  }
 }

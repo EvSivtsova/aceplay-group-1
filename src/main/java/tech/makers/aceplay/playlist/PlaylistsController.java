@@ -56,4 +56,12 @@ public class PlaylistsController {
     playlistRepository.save(playlist);
     return track;
   }
+
+  @DeleteMapping("/api/playlists/{id}")
+  public void deletePlaylist(@PathVariable Long id) {
+    Playlist playlist = playlistRepository
+            .findById(id)
+            .orElseThrow(() -> new ResponseStatusException(NOT_FOUND, "No playlist exists with id " + id));
+    playlistRepository.delete(playlist);
+  }
 }
