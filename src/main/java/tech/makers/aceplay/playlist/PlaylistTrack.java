@@ -45,4 +45,15 @@ public class PlaylistTrack {
         return addedAt;
     }
 
+    public Boolean isTrackInAlbumByAlbumID(Long albumId) {
+        return this.playlist.getId().equals(albumId);
+    }
+
+    public Boolean isRightTrackFindById(Long trackId) {
+        return this.track.getId().equals(trackId);
+    }
+
+    public Boolean isGivenTrackInGivenAlbum(Long albumId, Long trackId) {
+        return this.isTrackInAlbumByAlbumID(albumId) && this.isRightTrackFindById(trackId);
+    }
 }

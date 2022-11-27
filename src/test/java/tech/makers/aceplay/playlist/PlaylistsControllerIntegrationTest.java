@@ -167,7 +167,7 @@ class PlaylistsControllerIntegrationTest {
 
   @Test
   @WithMockUser
-  void testPlaylistIsNotSavedToDatabase_WhenEmptyName() throws Exception {
+  void WhenLoggedIn_PlaylistIsNotSavedToDatabase_WhenEmptyName() throws Exception {
       mvc.perform(
               MockMvcRequestBuilders.post("/api/playlists")
                       .contentType(MediaType.APPLICATION_JSON)
@@ -222,7 +222,7 @@ class PlaylistsControllerIntegrationTest {
   }
 
   @Test
-  void WhenLoggedOout_DeletePlaylist_IsForbidden() throws Exception {
+  void WhenLoggedOut_DeletePlaylist_IsForbidden() throws Exception {
     Playlist playlist = repository.save(new Playlist("Dance music"));
 
     mvc.perform(
@@ -230,5 +230,21 @@ class PlaylistsControllerIntegrationTest {
             .andExpect(status().isForbidden());
 
     assertEquals(1, repository.count());
+  }
+
+  @Test
+  @WithMockUser
+  void WhenLoggedIn_deleteTrackFromPlaylist_DeletesTrack() throws Exception {
+    Track originalTrack = trackRepository.save(new Track("Title", "Artist", "https://example.org/"));
+    Playlist playlist = repository.save(new Playlist("My Playlist"));
+    playlistTrackRepository.save(new PlaylistTrack(playlist, originalTrack));
+
+    mvc.perform(
+                    MockMvcRequestBuilders.delete("/api/playlists/" + playlist.getId() + "/tracks/" + originalTrack.getId()))
+            .andExpect(status().isOk());
+
+    assertEquals(1, repository.count());
+    assertEquals(0, playlistTrackRepository.count());
+    assertEquals(1, trackRepository.count());
   }
 }
