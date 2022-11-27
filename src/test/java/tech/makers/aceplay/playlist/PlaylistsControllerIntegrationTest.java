@@ -274,8 +274,5 @@ class PlaylistsControllerIntegrationTest {
     mvc.perform(
                     MockMvcRequestBuilders.delete("/api/playlists/" + playlist.getId() + "/tracks/" + originalTrack.getId()))
             .andExpect(status().isForbidden());
-
-    assertEquals(1, repository.count());
-    assertEquals(1, playlistTrackRepository.count());
   }
 }
