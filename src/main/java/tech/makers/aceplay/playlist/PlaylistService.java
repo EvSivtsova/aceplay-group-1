@@ -12,6 +12,7 @@ import tech.makers.aceplay.track.Track;
 import tech.makers.aceplay.track.TrackRepository;
 import tech.makers.aceplay.user.User;
 import tech.makers.aceplay.user.UserRepository;
+import tech.makers.aceplay.user.UserService;
 
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 
@@ -28,7 +29,7 @@ public class PlaylistService {
     private PlaylistTrackService playlistTrackService;
 
     @Autowired
-    private UserRepository userRepository;
+    private UserService userService;
 
     public Iterable<Playlist> getPlaylists() {
         return playlistRepository.findAll();
@@ -38,9 +39,7 @@ public class PlaylistService {
         if (playlist.getName().equals(""))
             throw new IllegalArgumentException("Playlist name cannot be empty");
 
-        String username = SecurityContextHolder.getContext().getAuthentication().getName();
-
-        User user = userRepository.findByUsername(username);
+        User user = userService.getAuthenticatedUser();
 
         playlist.setOwner(user);
 
