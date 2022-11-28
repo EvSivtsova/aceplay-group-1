@@ -6,6 +6,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.web.server.ResponseStatusException;
+import tech.makers.aceplay.playlist_track.PlaylistTrack;
+import tech.makers.aceplay.playlist_track.PlaylistTrackService;
 import tech.makers.aceplay.track.Track;
 import tech.makers.aceplay.track.TrackRepository;
 
@@ -28,7 +30,7 @@ class PlaylistServiceTest {
     @Mock
     private TrackRepository mockTrackRepository;
     @Mock
-    private PlaylistTrackRepository mockPlaylistTrackRepository;
+    private PlaylistTrackService mockPlaylistTrackService;
 
     @Test
     void getPlaylist_ReturnsAllPlaylists() {
@@ -115,16 +117,16 @@ class PlaylistServiceTest {
         when(mockTrackRepository.findById(null)).thenReturn(Optional.of(expectedTrack));
 
         PlaylistTrack expectedPlaylistTrack = new PlaylistTrack(expectedPlaylist, expectedTrack);
-        when(mockPlaylistTrackRepository.save(any(PlaylistTrack.class))).thenReturn(expectedPlaylistTrack);
+        when(mockPlaylistTrackService.createPlaylistTrack(any(PlaylistTrack.class))).thenReturn(null);
 
         Track actual = playlistService.addTrackToPlaylist(getRandomLong(), new TrackIdentifierDto());
 
         assertThat(actual).usingRecursiveComparison().isEqualTo(expectedTrack);
         verify(mockPlaylistRepository, times(1)).findById(anyLong());
         verify(mockTrackRepository, times(1)).findById(null);
-        verify(mockPlaylistTrackRepository, times(1)).save(any(PlaylistTrack.class));
+        verify(mockPlaylistTrackService, times(1)).createPlaylistTrack(any(PlaylistTrack.class));
         verifyNoMoreInteractions(mockPlaylistRepository);
-        verifyNoMoreInteractions(mockPlaylistTrackRepository);
+        verifyNoMoreInteractions(mockPlaylistTrackService);
         verifyNoMoreInteractions(mockTrackRepository);
     }
 
@@ -136,9 +138,9 @@ class PlaylistServiceTest {
 
         verify(mockPlaylistRepository, times(1)).findById(anyLong());
         verify(mockTrackRepository, times(0)).findById(null);
-        verify(mockPlaylistTrackRepository, times(0)).save(any(PlaylistTrack.class));
+        verify(mockPlaylistTrackService, times(0)).createPlaylistTrack(any(PlaylistTrack.class));
         verifyNoMoreInteractions(mockPlaylistRepository);
-        verifyNoMoreInteractions(mockPlaylistTrackRepository);
+        verifyNoMoreInteractions(mockPlaylistTrackService);
         verifyNoMoreInteractions(mockTrackRepository);
     }
 
@@ -153,52 +155,9 @@ class PlaylistServiceTest {
 
         verify(mockPlaylistRepository, times(1)).findById(anyLong());
         verify(mockTrackRepository, times(1)).findById(null);
-        verify(mockPlaylistTrackRepository, times(0)).save(any(PlaylistTrack.class));
+        verify(mockPlaylistTrackService, times(0)).createPlaylistTrack(any(PlaylistTrack.class));
         verifyNoMoreInteractions(mockPlaylistRepository);
-        verifyNoMoreInteractions(mockPlaylistTrackRepository);
-        verifyNoMoreInteractions(mockTrackRepository);
-    }
-
-    @Test
-    void deleteTrackFromPlaylist_WhenTrackExistsOnPlaylist_DeletesTrackFromPlaylist() {
-        Playlist expectedPlaylist = new Playlist("Another great playlist");
-        when(mockPlaylistRepository.findById(anyLong())).thenReturn(Optional.of(expectedPlaylist));
-
-        Track expectedTrack = new Track("Track Title", "Track Artist");
-        when(mockTrackRepository.findById(anyLong())).thenReturn(Optional.of(expectedTrack));
-
-        PlaylistTrack expectedPlaylistTrack = new PlaylistTrack(expectedPlaylist, expectedTrack);
-        when(mockPlaylistTrackRepository.findByPlaylistAndTrack(any(Playlist.class), any(Track.class))).thenReturn(Optional.of(expectedPlaylistTrack));
-
-        playlistService.deleteTrackFromPlaylist(getRandomLong(), getRandomLong());
-
-        verify(mockPlaylistRepository, times(1)).findById(anyLong());
-        verify(mockTrackRepository, times(1)).findById(anyLong());
-        verify(mockPlaylistTrackRepository, times(1)).findByPlaylistAndTrack(any(Playlist.class), any(Track.class));
-        verify(mockPlaylistTrackRepository, times(1)).delete(expectedPlaylistTrack);
-        verifyNoMoreInteractions(mockPlaylistRepository);
-        verifyNoMoreInteractions(mockPlaylistTrackRepository);
-        verifyNoMoreInteractions(mockTrackRepository);
-    }
-
-    @Test
-    void deleteTrackFromPlaylist_WhenTrackDoesntExistOnPlaylist_ThrowsError() {
-        Playlist expectedPlaylist = new Playlist("Another great playlist");
-        when(mockPlaylistRepository.findById(anyLong())).thenReturn(Optional.of(expectedPlaylist));
-
-        Track expectedTrack = new Track("Track Title", "Track Artist");
-        when(mockTrackRepository.findById(anyLong())).thenReturn(Optional.of(expectedTrack));
-
-        when(mockPlaylistTrackRepository.findByPlaylistAndTrack(any(Playlist.class), any(Track.class))).thenReturn(Optional.empty());
-
-        assertThrows(ResponseStatusException.class, () ->  playlistService.deleteTrackFromPlaylist(getRandomLong(), getRandomLong()));
-
-        verify(mockPlaylistRepository, times(1)).findById(anyLong());
-        verify(mockTrackRepository, times(1)).findById(anyLong());
-        verify(mockPlaylistTrackRepository, times(1)).findByPlaylistAndTrack(any(Playlist.class), any(Track.class));
-        verify(mockPlaylistTrackRepository, times(0)).delete(any(PlaylistTrack.class));
-        verifyNoMoreInteractions(mockPlaylistRepository);
-        verifyNoMoreInteractions(mockPlaylistTrackRepository);
+        verifyNoMoreInteractions(mockPlaylistTrackService);
         verifyNoMoreInteractions(mockTrackRepository);
     }
 

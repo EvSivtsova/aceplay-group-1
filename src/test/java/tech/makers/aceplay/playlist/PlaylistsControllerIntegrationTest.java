@@ -11,11 +11,11 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.springframework.web.server.ResponseStatusException;
+import tech.makers.aceplay.playlist_track.PlaylistTrack;
+import tech.makers.aceplay.playlist_track.PlaylistTrackRepository;
 import tech.makers.aceplay.track.Track;
 import tech.makers.aceplay.track.TrackRepository;
 
-import javax.xml.bind.ValidationException;
 import java.util.*;
 
 import static org.hamcrest.Matchers.hasSize;

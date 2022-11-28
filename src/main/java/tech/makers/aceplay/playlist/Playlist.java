@@ -1,7 +1,7 @@
 package tech.makers.aceplay.playlist;
 
 import com.fasterxml.jackson.annotation.JsonGetter;
-import org.hibernate.annotations.Cascade;
+import tech.makers.aceplay.playlist_track.PlaylistTrack;
 
 import javax.persistence.*;
 import java.util.*;

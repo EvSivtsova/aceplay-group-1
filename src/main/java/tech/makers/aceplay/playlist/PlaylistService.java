@@ -3,10 +3,10 @@ package tech.makers.aceplay.playlist;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
+import tech.makers.aceplay.playlist_track.PlaylistTrack;
+import tech.makers.aceplay.playlist_track.PlaylistTrackService;
 import tech.makers.aceplay.track.Track;
 import tech.makers.aceplay.track.TrackRepository;
-
-import java.util.Set;
 
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 
@@ -20,7 +20,7 @@ public class PlaylistService {
     private TrackRepository trackRepository;
 
     @Autowired
-    private PlaylistTrackRepository playlistTrackRepository;
+    private PlaylistTrackService playlistTrackService;
 
     public Iterable<Playlist> getPlaylists() {
         return playlistRepository.findAll();
@@ -45,7 +45,7 @@ public class PlaylistService {
 
         PlaylistTrack playlistTrack = new PlaylistTrack(playlist, track);
 
-        playlistTrackRepository.save(playlistTrack);
+        playlistTrackService.createPlaylistTrack(playlistTrack);
 
         return track;
     }
@@ -62,10 +62,7 @@ public class PlaylistService {
         Track track = trackRepository.findById(trackId)
                 .orElseThrow(() -> new ResponseStatusException(NOT_FOUND, "No track exists with id " + trackId));
 
-        PlaylistTrack playlistTrack = playlistTrackRepository.findByPlaylistAndTrack(playlist, track)
-                .orElseThrow(() -> new ResponseStatusException(NOT_FOUND, "No track exists with id " + trackId + " on playlist with id " + playlistId));
-
-        playlistTrackRepository.delete(playlistTrack);
+        playlistTrackService.findAndDeletePlaylistTrack(playlist, track);
     }
 }
 
