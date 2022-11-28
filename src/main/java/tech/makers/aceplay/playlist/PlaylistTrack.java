@@ -44,5 +44,4 @@ public class PlaylistTrack {
     public LocalDateTime getAddedAt() {
         return addedAt;
     }
-
 }

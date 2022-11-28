@@ -167,7 +167,7 @@ class PlaylistsControllerIntegrationTest {
 
   @Test
   @WithMockUser
-  void testPlaylistIsNotSavedToDatabase_WhenEmptyName() throws Exception {
+  void WhenLoggedIn_PlaylistIsNotSavedToDatabase_WhenEmptyName() throws Exception {
       mvc.perform(
               MockMvcRequestBuilders.post("/api/playlists")
                       .contentType(MediaType.APPLICATION_JSON)
@@ -222,7 +222,7 @@ class PlaylistsControllerIntegrationTest {
   }
 
   @Test
-  void WhenLoggedOout_DeletePlaylist_IsForbidden() throws Exception {
+  void WhenLoggedOut_DeletePlaylist_IsForbidden() throws Exception {
     Playlist playlist = repository.save(new Playlist("Dance music"));
 
     mvc.perform(
@@ -230,5 +230,59 @@ class PlaylistsControllerIntegrationTest {
             .andExpect(status().isForbidden());
 
     assertEquals(1, repository.count());
+  }
+
+  @Test
+  @WithMockUser
+  void WhenLoggedIn_deleteTrackFromPlaylist_DeletesTrack() throws Exception {
+    Track originalTrack = trackRepository.save(new Track("Title", "Artist", "https://example.org/"));
+    Playlist playlist = repository.save(new Playlist("My Playlist"));
+    playlistTrackRepository.save(new PlaylistTrack(playlist, originalTrack));
+
+    mvc.perform(
+                    MockMvcRequestBuilders.delete("/api/playlists/" + playlist.getId() + "/tracks/" + originalTrack.getId()))
+            .andExpect(status().isOk());
+
+    assertEquals(1, repository.count());
+    assertEquals(0, playlistTrackRepository.count());
+    assertEquals(1, trackRepository.count());
+  }
+
+  @Test
+  @WithMockUser
+  void WhenLoggedIn_ButNoPlaylist_DeleteTrackFromPlaylist_Throws404() throws Exception {
+    mvc.perform(
+                    MockMvcRequestBuilders.delete("/api/playlists/1/tracks/2"))
+            .andExpect(status().isNotFound());
+  }
+
+  @Test
+  @WithMockUser
+  void WhenLoggedIn_ButNoTrack_DeleteTrackFromPlaylist_Throws404() throws Exception {
+    Track originalTrack = trackRepository.save(new Track("Title", "Artist", "https://example.org/"));
+    Playlist playlist = repository.save(new Playlist("My Playlist"));
+    mvc.perform(
+                    MockMvcRequestBuilders.delete("/api/playlists/" + + playlist.getId() + "/tracks/" + originalTrack.getId()))
+            .andExpect(status().isNotFound());
+  }
+
+  @Test
+  @WithMockUser
+  void WhenLoggedIn_ButNoTrackWithinPlaylist_DeleteTrackFromPlaylist_Throws404() throws Exception {
+    Playlist playlist = repository.save(new Playlist("My Playlist"));
+    mvc.perform(
+                    MockMvcRequestBuilders.delete("/api/playlists/" + + playlist.getId() + "/tracks/2"))
+            .andExpect(status().isNotFound());
+  }
+
+  @Test
+  void WhenLoggedOut_deleteTrackFromPlaylist_IsForbidden() throws Exception {
+    Track originalTrack = trackRepository.save(new Track("Title", "Artist", "https://example.org/"));
+    Playlist playlist = repository.save(new Playlist("My Playlist"));
+    playlistTrackRepository.save(new PlaylistTrack(playlist, originalTrack));
+
+    mvc.perform(
+                    MockMvcRequestBuilders.delete("/api/playlists/" + playlist.getId() + "/tracks/" + originalTrack.getId()))
+            .andExpect(status().isForbidden());
   }
 }

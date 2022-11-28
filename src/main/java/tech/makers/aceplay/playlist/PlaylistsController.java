@@ -60,4 +60,17 @@ public class PlaylistsController {
             .orElseThrow(() -> new ResponseStatusException(NOT_FOUND, "No playlist exists with id " + id));
     playlistRepository.delete(playlist);
   }
+
+  @DeleteMapping("/api/playlists/{playlist_id}/tracks/{track_id}")
+  public void deleteTrackFromPlaylist(@PathVariable("playlist_id") Long playlistId, @PathVariable("track_id") Long trackId) {
+    Playlist playlist = playlistRepository
+            .findById(playlistId)
+            .orElseThrow(() -> new ResponseStatusException(NOT_FOUND, "No playlist exists with id " + playlistId));
+    Track track = trackRepository
+            .findById(trackId)
+            .orElseThrow(() -> new ResponseStatusException(NOT_FOUND, "No track exists with id " + trackId));
+    PlaylistTrack playlistTrack = playlistTrackRepository.findByPlaylistAndTrack(playlist, track)
+            .orElseThrow(() -> new ResponseStatusException(NOT_FOUND, "No track exists with id " + trackId + " on playlist with id " + playlistId));
+    playlistTrackRepository.delete(playlistTrack);
+  }
 }
