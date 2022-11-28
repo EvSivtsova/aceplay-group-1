@@ -71,22 +71,16 @@ public class PlaylistsController {
     playlistRepository.delete(playlist);
   }
 
-
-  @DeleteMapping("/api/playlists/{album_id}/tracks/{track_id}")
-  public void deleteTrackFromPlaylist(@PathVariable("album_id") Long albumId, @PathVariable("track_id") Long trackId) {
+  @DeleteMapping("/api/playlists/{playlist_id}/tracks/{track_id}")
+  public void deleteTrackFromPlaylist(@PathVariable("playlist_id") Long playlistId, @PathVariable("track_id") Long trackId) {
     Playlist playlist = playlistRepository
-            .findById(albumId)
-            .orElseThrow(() -> new ResponseStatusException(NOT_FOUND, "No playlist exists with id " + albumId));
-    Track Track = trackRepository
+            .findById(playlistId)
+            .orElseThrow(() -> new ResponseStatusException(NOT_FOUND, "No playlist exists with id " + playlistId));
+    Track track = trackRepository
             .findById(trackId)
             .orElseThrow(() -> new ResponseStatusException(NOT_FOUND, "No track exists with id " + trackId));
-    if (playlist.getTracks() != null) {
-      for (PlaylistTrack playlistTrack : playlistTrackRepository.findAll()) {
-        if (playlistTrack.isGivenTrackInGivenAlbum(albumId, trackId)) {
-          playlistTrackRepository.delete(playlistTrack);
-        }
-      }
-    }
+    PlaylistTrack playlistTrack = playlistTrackRepository.findByPlaylistAndTrack(playlist, track)
+            .orElseThrow(() -> new ResponseStatusException(NOT_FOUND, "No track exists with id " + trackId + " on playlist with id " + playlistId));
+    playlistTrackRepository.delete(playlistTrack);
   }
-
 }
