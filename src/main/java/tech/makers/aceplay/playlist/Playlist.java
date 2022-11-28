@@ -2,6 +2,7 @@ package tech.makers.aceplay.playlist;
 
 import com.fasterxml.jackson.annotation.JsonGetter;
 import tech.makers.aceplay.playlist_track.PlaylistTrack;
+import tech.makers.aceplay.user.User;
 
 import javax.persistence.*;
 import java.util.*;
@@ -19,6 +20,9 @@ public class Playlist {
   @OrderBy("addedAt")
   private Set<PlaylistTrack> tracks = new HashSet<>();
 
+  @ManyToOne(cascade = CascadeType.REMOVE)
+  private User owner;
+
   public Playlist() {}
 
   public Playlist(String name) {
@@ -32,6 +36,10 @@ public class Playlist {
   public void setName(String name) {
     this.name = name;
   }
+
+  public void setOwner(User owner) { this.owner = owner; }
+
+  public User getOwner() { return owner; }
 
   public Long getId() {
     return id;

@@ -1,12 +1,17 @@
 package tech.makers.aceplay.playlist;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 import tech.makers.aceplay.playlist_track.PlaylistTrack;
 import tech.makers.aceplay.playlist_track.PlaylistTrackService;
 import tech.makers.aceplay.track.Track;
 import tech.makers.aceplay.track.TrackRepository;
+import tech.makers.aceplay.user.User;
+import tech.makers.aceplay.user.UserRepository;
 
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 
@@ -22,6 +27,9 @@ public class PlaylistService {
     @Autowired
     private PlaylistTrackService playlistTrackService;
 
+    @Autowired
+    private UserRepository userRepository;
+
     public Iterable<Playlist> getPlaylists() {
         return playlistRepository.findAll();
     }
@@ -29,6 +37,12 @@ public class PlaylistService {
     public Playlist createPlaylist(Playlist playlist) {
         if (playlist.getName().equals(""))
             throw new IllegalArgumentException("Playlist name cannot be empty");
+
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+
+        User user = userRepository.findByUsername(username);
+
+        playlist.setOwner(user);
 
         return playlistRepository.save(playlist);
     }
