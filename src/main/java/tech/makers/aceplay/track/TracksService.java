@@ -11,13 +11,6 @@ public class TracksService {
     @Autowired
     private TrackRepository trackRepository;
 
-    public TracksService() {
-    }
-
-    public TracksService(TrackRepository trackRepository) {
-        this.trackRepository = trackRepository;
-    }
-
     public Iterable<Track> index() {
         return trackRepository.findAll();
     }
