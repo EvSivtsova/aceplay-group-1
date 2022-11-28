@@ -6,6 +6,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.net.MalformedURLException;
 import java.util.Optional;
@@ -70,17 +71,27 @@ public class TracksServiceImplTest {
 
     @Test
     public void updateTrack_UpdatesTitleAndArtist()
-            throws IllegalArgumentException, MalformedURLException {
+            throws ResponseStatusException, MalformedURLException {
         when(mockTrack.getArtist()).thenReturn("New Artist");
         when(mockTrack.getTitle()).thenReturn("New Title");
 
         Track originalTrack = new Track("Title", "Artist", "https://example.org/");
-        Long mockId = Long.valueOf(1);
+        Long mockId = 1L;
         when(mockRepository.findById(mockId)).thenReturn(Optional.of(originalTrack));
 
         tracksService.updateTrack(mockId, mockTrack);
         assertEquals(mockTrack.getArtist(), originalTrack.getArtist());
         assertEquals(mockTrack.getTitle(), originalTrack.getTitle());
         verify(mockRepository).save(originalTrack);
+    }
+
+    @Test
+    public void deleteTrack_CallsDeleteOnRepository()
+            throws ResponseStatusException {
+        Long mockId = 1L;
+        when(mockRepository.findById(mockId)).thenReturn(Optional.of(mockTrack));
+
+        tracksService.deleteTrack(mockId);
+        verify(mockRepository).delete(mockTrack);
     }
 }
