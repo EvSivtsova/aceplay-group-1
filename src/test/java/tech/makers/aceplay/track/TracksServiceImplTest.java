@@ -9,6 +9,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.net.MalformedURLException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -28,6 +30,13 @@ public class TracksServiceImplTest {
     @BeforeEach
     public void setUp() {
         MockitoAnnotations.openMocks(this);
+    }
+
+    @Test
+    public void index_CallsFindAll() {
+        ArrayList<Track> emptyIterable = new ArrayList<Track>();
+        assertEquals(emptyIterable, tracksService.index());
+        verify(mockRepository).findAll();
     }
 
     @Test
