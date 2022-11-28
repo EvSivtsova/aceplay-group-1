@@ -19,61 +19,35 @@ import static org.springframework.http.HttpStatus.NOT_FOUND;
 @RestController
 public class PlaylistsController {
   @Autowired
-  private PlaylistRepository playlistRepository;
-
-  @Autowired
-  private TrackRepository trackRepository;
-
-  @Autowired
-  private PlaylistTrackRepository playlistTrackRepository;
+  private PlaylistService playlistService;
 
   @GetMapping("/api/playlists")
   public Iterable<Playlist> playlists() {
-    return playlistRepository.findAll();
+    return playlistService.getPlaylists();
   }
 
   @PostMapping("/api/playlists")
   public Playlist create(@RequestBody Playlist playlist) {
-    if (playlist.getName().equals(""))
-      throw new IllegalArgumentException("Playlist name cannot be empty");
-    return playlistRepository.save(playlist);
+    return playlistService.createPlaylist(playlist);
   }
 
   @GetMapping("/api/playlists/{id}")
   public Playlist get(@PathVariable Long id) {
-    return playlistRepository.findById(id)
-            .orElseThrow(() -> new ResponseStatusException(NOT_FOUND, "No playlist exists with id " + id));
+    return playlistService.getPlaylistById(id);
   }
 
-  @PutMapping("/api/playlists/{id}/tracks")
-  public Track addTrack(@PathVariable Long id, @RequestBody TrackIdentifierDto trackIdentifierDto) {
-    Playlist playlist = playlistRepository.findById(id)
-            .orElseThrow(() -> new ResponseStatusException(NOT_FOUND, "No playlist exists with id " + id));
-    Track track = trackRepository.findById(trackIdentifierDto.getId())
-            .orElseThrow(() -> new ResponseStatusException(NOT_FOUND, "No track exists with id " + trackIdentifierDto.getId()));
-    PlaylistTrack playlistTrack = new PlaylistTrack(playlist, track);
-    playlistTrackRepository.save(playlistTrack);
-    return track;
+  @PutMapping("/api/playlists/{playlistId}/tracks")
+  public Track addTrack(@PathVariable Long playlistId, @RequestBody TrackIdentifierDto trackIdentifierDto) {
+    return playlistService.addTrackToPlaylist(playlistId, trackIdentifierDto);
   }
 
   @DeleteMapping("/api/playlists/{id}")
   public void deletePlaylist(@PathVariable Long id) {
-    Playlist playlist = playlistRepository
-            .findById(id)
-            .orElseThrow(() -> new ResponseStatusException(NOT_FOUND, "No playlist exists with id " + id));
-    playlistRepository.delete(playlist);
+    playlistService.deletePlaylist(id);
   }
 
   @DeleteMapping("/api/playlists/{playlist_id}/tracks/{track_id}")
   public void deleteTrackFromPlaylist(@PathVariable("playlist_id") Long playlistId, @PathVariable("track_id") Long trackId) {
-    Playlist playlist = playlistRepository
-            .findById(playlistId)
-            .orElseThrow(() -> new ResponseStatusException(NOT_FOUND, "No playlist exists with id " + playlistId));
-    Track track = trackRepository
-            .findById(trackId)
-            .orElseThrow(() -> new ResponseStatusException(NOT_FOUND, "No track exists with id " + trackId));
-    PlaylistTrack playlistTrack = playlistTrackRepository.findByPlaylistAndTrack(playlist, track)
-            .orElseThrow(() -> new ResponseStatusException(NOT_FOUND, "No track exists with id " + trackId + " on playlist with id " + playlistId));
-    playlistTrackRepository.delete(playlistTrack);
+    playlistService.deleteTrackFromPlaylist(playlistId, trackId);
   }
 }
