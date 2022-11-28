@@ -8,9 +8,15 @@ import static org.springframework.http.HttpStatus.NOT_FOUND;
 
 @Service
 public class TracksService {
-
     @Autowired
     private TrackRepository trackRepository;
+
+    public TracksService() {
+    }
+
+    public TracksService(TrackRepository trackRepository) {
+        this.trackRepository = trackRepository;
+    }
 
     public Iterable<Track> index() {
         return trackRepository.findAll();
@@ -43,5 +49,9 @@ public class TracksService {
         return trackRepository
                 .findById(id)
                 .orElseThrow(() -> new ResponseStatusException(NOT_FOUND, "No track exists with id " + id));
+    }
+
+    public TrackRepository getTrackRepository() {
+        return trackRepository;
     }
 }
