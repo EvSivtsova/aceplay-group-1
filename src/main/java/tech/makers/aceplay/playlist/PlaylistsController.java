@@ -18,11 +18,14 @@ import static org.springframework.http.HttpStatus.NOT_FOUND;
 // https://www.youtube.com/watch?v=vreyOZxdb5Y&t=0s
 @RestController
 public class PlaylistsController {
-  @Autowired private PlaylistRepository playlistRepository;
+  @Autowired
+  private PlaylistRepository playlistRepository;
 
-  @Autowired private TrackRepository trackRepository;
+  @Autowired
+  private TrackRepository trackRepository;
 
-  @Autowired private PlaylistTrackRepository playlistTrackRepository;
+  @Autowired
+  private PlaylistTrackRepository playlistTrackRepository;
 
   @GetMapping("/api/playlists")
   public Iterable<Playlist> playlists() {
@@ -39,7 +42,7 @@ public class PlaylistsController {
   @GetMapping("/api/playlists/{id}")
   public Playlist get(@PathVariable Long id) {
     return playlistRepository.findById(id)
-        .orElseThrow(() -> new ResponseStatusException(NOT_FOUND, "No playlist exists with id " + id));
+            .orElseThrow(() -> new ResponseStatusException(NOT_FOUND, "No playlist exists with id " + id));
   }
 
   @PutMapping("/api/playlists/{id}/tracks")

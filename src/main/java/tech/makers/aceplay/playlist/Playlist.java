@@ -1,6 +1,8 @@
 package tech.makers.aceplay.playlist;
 
 import com.fasterxml.jackson.annotation.JsonGetter;
+import org.hibernate.annotations.Cascade;
+
 import javax.persistence.*;
 import java.util.*;
 
@@ -13,7 +15,7 @@ public class Playlist {
 
   private String name;
 
-  @OneToMany(mappedBy = "playlist", fetch = FetchType.EAGER)
+  @OneToMany(mappedBy = "playlist", fetch = FetchType.EAGER, cascade = CascadeType.REMOVE)
   @OrderBy("addedAt")
   private Set<PlaylistTrack> tracks = new HashSet<>();
 
