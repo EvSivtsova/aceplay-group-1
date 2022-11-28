@@ -42,4 +42,16 @@ public class TracksServiceImplTest {
         tracksService.validateAndSaveTrack(mockTrack);
         verify(mockRepository).save(mockTrack);
     }
+
+    @Test
+    public void validateAndSaveTracks_throwsExceptionWhenNoTrackTitle()
+            throws IllegalArgumentException {
+        when(mockTrack.getArtist()).thenReturn("Not empty");
+        when(mockTrack.getTitle()).thenReturn("");
+
+        Exception exception = assertThrows(IllegalArgumentException.class, () ->
+                tracksService.validateAndSaveTrack(mockTrack));
+
+        assertEquals("Track title cannot be empty", exception.getMessage());
+    }
 }
