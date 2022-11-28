@@ -215,6 +215,23 @@ class PlaylistsControllerIntegrationTest {
 
   @Test
   @WithMockUser
+  void WhenLoggedIn_DeletePlaylist_DeletesPlaylistTracks() throws Exception {
+    Track originalTrack = trackRepository.save(new Track("Title", "Artist"));
+    Playlist playlist = repository.save(new Playlist("My Playlist"));
+    PlaylistTrack playlistTrack = playlistTrackRepository.save(new PlaylistTrack(playlist, originalTrack));
+
+    mvc.perform(
+                    MockMvcRequestBuilders.delete("/api/playlists/" + playlist.getId()))
+            .andExpect(status().isOk());
+
+    assertEquals(0, repository.count());
+    assertEquals(0, playlistTrackRepository.count());
+    assertEquals(1, trackRepository.count());
+
+  }
+
+  @Test
+  @WithMockUser
   void WhenLoggedIn_ButNoPlaylist_DeletePlaylist_Throws404() throws Exception {
     mvc.perform(
                     MockMvcRequestBuilders.delete("/api/playlists/1"))

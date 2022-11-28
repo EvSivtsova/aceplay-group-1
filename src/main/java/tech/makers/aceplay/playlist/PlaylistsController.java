@@ -61,13 +61,6 @@ public class PlaylistsController {
     Playlist playlist = playlistRepository
             .findById(id)
             .orElseThrow(() -> new ResponseStatusException(NOT_FOUND, "No playlist exists with id " + id));
-    if (playlist.getTracks() != null) {
-      for (PlaylistTrack playlistTrack : playlistTrackRepository.findAll()) {
-        if (playlistTrack.isTrackInAlbumByAlbumID(id)) {
-          playlistTrackRepository.delete(playlistTrack);
-        }
-      }
-    }
     playlistRepository.delete(playlist);
   }
 
