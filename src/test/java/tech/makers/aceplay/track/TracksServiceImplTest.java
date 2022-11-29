@@ -5,14 +5,12 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.web.server.ResponseStatusException;
 import tech.makers.aceplay.user.User;
 import tech.makers.aceplay.user.UserService;
 
 import java.net.MalformedURLException;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 

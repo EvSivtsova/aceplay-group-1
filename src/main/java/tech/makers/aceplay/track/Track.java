@@ -22,7 +22,7 @@ public class Track {
   private URL publicUrl;
 
 
-  @ManyToMany
+  @ManyToMany(fetch = FetchType.EAGER)
   @JoinTable(
           name="users_tracks",
           joinColumns={@JoinColumn(name="track_id")},

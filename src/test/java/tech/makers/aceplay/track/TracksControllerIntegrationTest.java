@@ -14,9 +14,12 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import tech.makers.aceplay.track.Track;
 import tech.makers.aceplay.track.TrackRepository;
+import tech.makers.aceplay.user.User;
+import tech.makers.aceplay.user.UserRepository;
 
 import java.util.Objects;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.hasSize;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -32,6 +35,7 @@ class TracksControllerIntegrationTest {
 
   @Autowired private TrackRepository repository;
 
+  @Autowired private UserRepository userRepository;
   @Test
   @WithMockUser
   void WhenLoggedIn_AndThereAreNoTracks_TracksIndexReturnsNoTracks() throws Exception {
@@ -190,5 +194,28 @@ class TracksControllerIntegrationTest {
         .andExpect(status().isForbidden());
 
     assertEquals(1, repository.count());
+  }
+
+  @Test
+  @WithMockUser
+  void WhenLoggedIn_addUserOfTrack_addsUserToUsers() throws Exception {
+    Track track = repository.save(new Track("Blue Line Swinger", "Yo La Tengo", "https://example.org/track.mp3"));
+    User user = userRepository.save(new User("user", "password"));
+
+    mvc.perform(
+                    MockMvcRequestBuilders.put("/api/tracks/" + track.getId()))
+            .andExpect(status().isOk())
+            .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+            .andExpect(jsonPath("$.title").value("Blue Line Swinger"))
+            .andExpect(jsonPath("$.artist").value("Yo La Tengo"))
+            .andExpect(jsonPath("$.publicUrl").value("https://example.org/track.mp3"))
+            .andExpect(jsonPath("$.users[0].username").value("user"))
+            .andExpect(jsonPath("$.users[0].id").value(user.getId())
+            );
+
+    Track updatedTrack = repository.findFirstByOrderByIdAsc();
+    assertEquals(user.getId(), updatedTrack.getUsers().iterator().next().getId());
+    assertEquals(user.getPassword(), updatedTrack.getUsers().iterator().next().getPassword());
+    assertEquals(user.getUsername(), updatedTrack.getUsers().iterator().next().getUsername());
   }
 }
