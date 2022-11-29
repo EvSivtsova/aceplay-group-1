@@ -20,6 +20,7 @@ public class Track {
 
   private URL publicUrl;
 
+
   @ManyToMany
   @JoinTable(
           name="users_tracks",
@@ -76,6 +77,10 @@ public class Track {
 
   public void setPublicUrl(String publicUrl) throws MalformedURLException {
     this.publicUrl = new URL(publicUrl);
+  }
+
+  public Set<User> getUsers() {
+    return users;
   }
 
   public void setPublicUrl(URL publicUrl) {

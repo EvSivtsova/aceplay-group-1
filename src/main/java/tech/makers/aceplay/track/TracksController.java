@@ -28,6 +28,11 @@ public class TracksController {
     return tracksService.updateTrack(id, newTrack);
   }
 
+  @PutMapping("/api/tracks/{id}")
+  public Track addUserOfTrack(@PathVariable Long id) {
+    return tracksService.addUserOfTrack(id);
+  }
+
   @DeleteMapping("/api/tracks/{id}")
   public void delete(@PathVariable Long id) {
     tracksService.deleteTrack(id);

@@ -1,8 +1,11 @@
 package tech.makers.aceplay.track;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
+import tech.makers.aceplay.user.User;
+import tech.makers.aceplay.user.UserRepository;
 
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 
@@ -14,6 +17,9 @@ public class TracksService {
     public Iterable<Track> index() {
         return trackRepository.findAll();
     }
+
+    @Autowired
+    private UserRepository userRepository;
 
     public Track validateAndSaveTrack(Track track) {
         if (track.getTitle().equals(""))
@@ -33,6 +39,13 @@ public class TracksService {
         return track;
     }
 
+    public Track addUserOfTrack(Long id) {
+        Track track = retrieveTrackWithId(id);
+        track.getUsers().add(getAuthenticatedUser());
+        return trackRepository.save(track);
+    }
+
+
     public void deleteTrack(Long id) {
         Track track = retrieveTrackWithId(id);
         trackRepository.delete(track);
@@ -46,5 +59,12 @@ public class TracksService {
 
     public TrackRepository getTrackRepository() {
         return trackRepository;
+    }
+
+    // REFACTOR OUT INTO USER SERVICE
+    private User getAuthenticatedUser() {
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+
+        return userRepository.findByUsername(username);
     }
 }
