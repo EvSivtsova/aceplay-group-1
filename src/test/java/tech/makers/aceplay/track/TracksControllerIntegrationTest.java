@@ -70,6 +70,8 @@ class TracksControllerIntegrationTest {
   @Test
   @WithMockUser
   void WhenLoggedIn_TracksPostCreatesNewTrack() throws Exception {
+    User user = userRepository.save(new User("user", "password"));
+
     mvc.perform(
             MockMvcRequestBuilders.post("/api/tracks")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -83,6 +85,10 @@ class TracksControllerIntegrationTest {
     Track track = repository.findFirstByOrderByIdAsc();
     assertEquals("Blue Line Swinger", track.getTitle());
     assertEquals("https://example.org/track.mp3", track.getPublicUrl().toString());
+
+    assertEquals(user.getId(), track.getUsers().iterator().next().getId());
+    assertEquals(user.getPassword(), track.getUsers().iterator().next().getPassword());
+    assertEquals(user.getUsername(), track.getUsers().iterator().next().getUsername());
   }
 
   @Test

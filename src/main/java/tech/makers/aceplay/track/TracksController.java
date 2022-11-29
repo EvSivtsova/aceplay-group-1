@@ -19,8 +19,9 @@ public class TracksController {
   }
 
   @PostMapping("/api/tracks")
-  public Track create(@RequestBody Track track) {
-      return tracksService.validateAndSaveTrack(track);
+  public Track createAndAddUser(@RequestBody Track track) {
+      tracksService.validateAndSaveTrack(track);
+      return tracksService.addUserOfTrack(track.getId());
   }
 
   @PatchMapping("/api/tracks/{id}")

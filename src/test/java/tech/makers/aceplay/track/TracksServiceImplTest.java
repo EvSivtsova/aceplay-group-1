@@ -50,6 +50,8 @@ public class TracksServiceImplTest {
     public void validateAndSaveTracks_CallsSaveOnRepo() {
         when(mockTrack.getArtist()).thenReturn("Not empty");
         when(mockTrack.getTitle()).thenReturn("Not empty");
+        when(mockTrack.getId()).thenReturn(1L);
+
         when(mockRepository.save(mockTrack)).thenReturn(mockTrack);
 
         assertEquals(mockTrack, tracksService.validateAndSaveTrack(mockTrack));
