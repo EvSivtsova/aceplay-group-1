@@ -1,11 +1,11 @@
 package tech.makers.aceplay.track;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import tech.makers.aceplay.user.User;
+
+import javax.persistence.*;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Set;
 
 // https://www.youtube.com/watch?v=5r3QU09v7ig&t=2999s
 @Entity
@@ -19,6 +19,14 @@ public class Track {
   private String artist;
 
   private URL publicUrl;
+
+  @ManyToMany
+  @JoinTable(
+          name="users_tracks",
+          joinColumns={@JoinColumn(name="track_id")},
+          inverseJoinColumns={@JoinColumn(name="user_id")}
+          )
+  private Set<User> users;
 
   public Track() { }
 

@@ -3,6 +3,7 @@ package tech.makers.aceplay.user;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import tech.makers.aceplay.track.Track;
 
 import javax.persistence.*;
 import java.util.Collection;
@@ -23,6 +24,9 @@ public class User implements UserDetails {
   private String username;
 
   private String password;
+
+  @ManyToMany(mappedBy = "users")
+  private Set<Track> personalLibrary;
 
   protected User() {}
 
