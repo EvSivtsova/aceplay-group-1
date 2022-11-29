@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 import tech.makers.aceplay.user.User;
 import tech.makers.aceplay.user.UserRepository;
+import tech.makers.aceplay.user.UserService;
 
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 
@@ -19,7 +20,7 @@ public class TracksService {
     }
 
     @Autowired
-    private UserRepository userRepository;
+    private UserService userService;
 
     public Track validateAndSaveTrack(Track track) {
         if (track.getTitle().equals(""))
@@ -41,10 +42,9 @@ public class TracksService {
 
     public Track addUserOfTrack(Long id) {
         Track track = retrieveTrackWithId(id);
-        track.getUsers().add(getAuthenticatedUser());
+        track.getUsers().add(userService.getAuthenticatedUser());
         return trackRepository.save(track);
     }
-
 
     public void deleteTrack(Long id) {
         Track track = retrieveTrackWithId(id);
@@ -59,12 +59,5 @@ public class TracksService {
 
     public TrackRepository getTrackRepository() {
         return trackRepository;
-    }
-
-    // REFACTOR OUT INTO USER SERVICE
-    private User getAuthenticatedUser() {
-        String username = SecurityContextHolder.getContext().getAuthentication().getName();
-
-        return userRepository.findByUsername(username);
     }
 }

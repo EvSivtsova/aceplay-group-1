@@ -5,6 +5,7 @@ import tech.makers.aceplay.user.User;
 import javax.persistence.*;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.HashSet;
 import java.util.Set;
 
 // https://www.youtube.com/watch?v=5r3QU09v7ig&t=2999s
@@ -27,7 +28,7 @@ public class Track {
           joinColumns={@JoinColumn(name="track_id")},
           inverseJoinColumns={@JoinColumn(name="user_id")}
           )
-  private Set<User> users;
+  private Set<User> users = new HashSet<>();
 
   public Track() { }
 
@@ -77,6 +78,10 @@ public class Track {
 
   public void setPublicUrl(String publicUrl) throws MalformedURLException {
     this.publicUrl = new URL(publicUrl);
+  }
+
+  public void setUsers(Set<User> users) {
+    this.users = users;
   }
 
   public Set<User> getUsers() {
