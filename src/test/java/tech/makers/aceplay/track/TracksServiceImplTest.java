@@ -129,5 +129,7 @@ public class TracksServiceImplTest {
         when(mockRepository.findByUsers(mockUser)).thenReturn(mockLibrary);
         when(mockUserService.getAuthenticatedUser()).thenReturn(mockUser);
         assertTrue(tracksService.userLibraryIndex().contains(mockTrack));
+        verify(mockUserService).getAuthenticatedUser();
+        verify(mockRepository).findByUsers(mockUser);
     }
 }
