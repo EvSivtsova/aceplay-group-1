@@ -30,8 +30,8 @@ public class PlaylistsController {
   }
 
   @GetMapping("/api/playlists/{id}")
-  public Playlist get(@PathVariable Long id) {
-    return playlistService.getPlaylistById(id);
+  public PlaylistDto get(@PathVariable Long id) {
+    return convertToDto(playlistService.getPlaylistById(id));
   }
 
   @PutMapping("/api/playlists/{playlistId}/tracks")
@@ -50,14 +50,10 @@ public class PlaylistsController {
   }
 
   private Playlist convertToEntity(PlaylistDto playlistDto) {
-    Playlist playlist = playlistMapper.dtoToPlaylist(playlistDto);
-    return playlist;
+    return playlistMapper.dtoToPlaylist(playlistDto);
   }
 
   private PlaylistDto convertToDto(Playlist playlist) {
-    PlaylistDto playlistDto = playlistMapper.playlistToDto(playlist);
-//    postDto.setSubmissionDate(post.getSubmissionDate(),
-//            userService.getCurrentUser().getPreference().getTimezone());
-    return playlistDto;
+    return playlistMapper.playlistToDto(playlist);
   }
 }
