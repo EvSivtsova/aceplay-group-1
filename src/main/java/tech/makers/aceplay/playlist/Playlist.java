@@ -50,6 +50,10 @@ public class Playlist {
     return tracks;
   }
 
+  public void setTracks(Set<PlaylistTrack> tracks) {
+    this.tracks = tracks;
+  }
+
   @Override
   public String toString() {
     return String.format("Playlist[id=%d name='%s']", id, name);

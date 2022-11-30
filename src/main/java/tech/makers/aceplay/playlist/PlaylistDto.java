@@ -2,13 +2,14 @@ package tech.makers.aceplay.playlist;
 
 import tech.makers.aceplay.playlist_track.PlaylistTrack;
 
+import java.util.HashSet;
 import java.util.Set;
 
 public class PlaylistDto {
 
     private Long id;
     private String name;
-    private Set<PlaylistTrack> tracks;
+    private Set<PlaylistTrack> tracks = new HashSet<>();
 
     public PlaylistDto(String nameFromUser) {
         this.name = nameFromUser;
