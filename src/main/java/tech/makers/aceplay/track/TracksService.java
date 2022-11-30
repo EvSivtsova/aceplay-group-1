@@ -26,8 +26,6 @@ public class TracksService {
         if (track.getArtist().equals(""))
             throw new IllegalArgumentException("Track artist cannot be empty");
 
-//        addUserOfTrack(track.getId());
-
         return trackRepository.save(track);
     }
 
