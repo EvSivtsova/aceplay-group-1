@@ -36,6 +36,8 @@ class TracksControllerIntegrationTest {
   @Autowired private TrackRepository repository;
 
   @Autowired private UserRepository userRepository;
+
+  @Autowired private TracksService tracksService;
   @Test
   @WithMockUser
   void WhenLoggedIn_AndThereAreNoTracks_TracksIndexReturnsNoTracks() throws Exception {
@@ -223,5 +225,23 @@ class TracksControllerIntegrationTest {
     assertEquals(user.getId(), updatedTrack.getUsers().iterator().next().getId());
     assertEquals(user.getPassword(), updatedTrack.getUsers().iterator().next().getPassword());
     assertEquals(user.getUsername(), updatedTrack.getUsers().iterator().next().getUsername());
+  }
+
+  @Test
+  @WithMockUser
+  void  WhenLoggedIn_userOnlySeesTheirSavedSongs() throws Exception {
+    Track track = repository.save(new Track("Blue Line Swinger", "Yo La Tengo", "https://example.org/track.mp3"));
+    User user = userRepository.save(new User("user", "password"));
+    tracksService.addUserOfTrack(track.getId());
+    mvc.perform(
+            MockMvcRequestBuilders
+                    .get("/api/tracks/userLibraryIndex")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content("[{\"title\": \"example track\", \"artist\": \"\", \"publicUrl\": \"https://example.org/track.mp3\"}]")
+            )
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.title").value("Blue Line Swinger"))
+            .andExpect(jsonPath("$.artist").value("Yo La Tengo"))
+            .andExpect(jsonPath("$.publicUrl").value("https://example.org/track.mp3"));
   }
 }

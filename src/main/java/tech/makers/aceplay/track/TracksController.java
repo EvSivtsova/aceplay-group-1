@@ -4,6 +4,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.Set;
+
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 
 // https://www.youtube.com/watch?v=5r3QU09v7ig&t=2410s
@@ -37,5 +39,10 @@ public class TracksController {
   @DeleteMapping("/api/tracks/{id}")
   public void delete(@PathVariable Long id) {
     tracksService.deleteTrack(id);
+  }
+
+  @GetMapping("/api/tracks/userLibraryIndex")
+  public Set<Track> userLibraryIndex() {
+    return tracksService.userLibraryIndex();
   }
 }

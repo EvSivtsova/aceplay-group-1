@@ -3,7 +3,11 @@ package tech.makers.aceplay.track;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
+import tech.makers.aceplay.user.User;
 import tech.makers.aceplay.user.UserService;
+
+import java.util.Collection;
+import java.util.Set;
 
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 
@@ -56,5 +60,9 @@ public class TracksService {
 
     public TrackRepository getTrackRepository() {
         return trackRepository;
+    }
+
+    public Set<Track> userLibraryIndex() {
+        return userService.getAuthenticatedUser().getPersonalLibrary();
     }
 }

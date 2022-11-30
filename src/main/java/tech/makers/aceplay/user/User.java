@@ -80,4 +80,8 @@ public class User implements UserDetails {
     return String.format(
         "User[id=%d username='%s' password=HIDDEN]", id, username);
   }
+
+    public Set<Track> getPersonalLibrary() {
+      return personalLibrary;
+    }
 }
