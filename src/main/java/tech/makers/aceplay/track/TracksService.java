@@ -63,6 +63,7 @@ public class TracksService {
     }
 
     public Set<Track> userLibraryIndex() {
-        return userService.getAuthenticatedUser().getPersonalLibrary();
+        User user = userService.getAuthenticatedUser();
+        return trackRepository.findByUsers(user);
     }
 }

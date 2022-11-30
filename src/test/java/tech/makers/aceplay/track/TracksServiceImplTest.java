@@ -126,10 +126,7 @@ public class TracksServiceImplTest {
             throws MalformedURLException {
         Set<Track> mockLibrary = new HashSet<>();
         mockLibrary.add(mockTrack);
-        when(mockUser.getPersonalLibrary()).thenReturn(mockLibrary);
-
-//        Track userTrack = new Track("Title", "Artist", "https://example.org/");
-//        Track notUserTrack = new Track( "Some", "Thing", "https://example.org/");
+        when(mockRepository.findByUsers(mockUser)).thenReturn(mockLibrary);
         when(mockUserService.getAuthenticatedUser()).thenReturn(mockUser);
         assertTrue(tracksService.userLibraryIndex().contains(mockTrack));
     }

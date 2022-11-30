@@ -237,11 +237,10 @@ class TracksControllerIntegrationTest {
             MockMvcRequestBuilders
                     .get("/api/tracks/userLibraryIndex")
                     .contentType(MediaType.APPLICATION_JSON)
-                    .content("[{\"title\": \"example track\", \"artist\": \"\", \"publicUrl\": \"https://example.org/track.mp3\"}]")
             )
             .andExpect(status().isOk())
-            .andExpect(jsonPath("$.title").value("Blue Line Swinger"))
-            .andExpect(jsonPath("$.artist").value("Yo La Tengo"))
-            .andExpect(jsonPath("$.publicUrl").value("https://example.org/track.mp3"));
+            .andExpect(jsonPath("$[0].title").value("Blue Line Swinger"))
+            .andExpect(jsonPath("$[0].artist").value("Yo La Tengo"))
+            .andExpect(jsonPath("$[0].publicUrl").value("https://example.org/track.mp3"));
   }
 }
