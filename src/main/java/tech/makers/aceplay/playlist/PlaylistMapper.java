@@ -5,7 +5,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class PlaylistMapper {
     public PlaylistDto playlistToDto(Playlist playlist){
-        return new PlaylistDto(playlist.getName(), playlist.getTracks());
+        return new PlaylistDto(playlist.getId(), playlist.getName(), playlist.getTracks());
     }
 
     public Playlist dtoToPlaylist(PlaylistDto playlistDto){

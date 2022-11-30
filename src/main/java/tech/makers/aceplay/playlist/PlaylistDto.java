@@ -5,12 +5,27 @@ import tech.makers.aceplay.playlist_track.PlaylistTrack;
 import java.util.Set;
 
 public class PlaylistDto {
+
+    private Long id;
     private String name;
     private Set<PlaylistTrack> tracks;
 
-    public PlaylistDto(String nameFromUser, Set<PlaylistTrack> tracksFromDatabase) {
+    public PlaylistDto(String nameFromUser) {
         this.name = nameFromUser;
+    }
+
+    public PlaylistDto(Long idFromDatabase, String nameFromDatabase, Set<PlaylistTrack> tracksFromDatabase) {
+        this.id = idFromDatabase;
+        this.name = nameFromDatabase;
         this.tracks = tracksFromDatabase;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getName() {
