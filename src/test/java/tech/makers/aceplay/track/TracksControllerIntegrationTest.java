@@ -214,10 +214,7 @@ class TracksControllerIntegrationTest {
             .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
             .andExpect(jsonPath("$.title").value("Blue Line Swinger"))
             .andExpect(jsonPath("$.artist").value("Yo La Tengo"))
-            .andExpect(jsonPath("$.publicUrl").value("https://example.org/track.mp3"))
-            .andExpect(jsonPath("$.users[0].username").value("user"))
-            .andExpect(jsonPath("$.users[0].id").value(user.getId())
-            );
+            .andExpect(jsonPath("$.publicUrl").value("https://example.org/track.mp3"));
 
     Track updatedTrack = repository.findFirstByOrderByIdAsc();
     assertEquals(user.getId(), updatedTrack.getUsers().iterator().next().getId());

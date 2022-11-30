@@ -2,9 +2,11 @@ package tech.makers.aceplay.track;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
+import tech.makers.aceplay.playlist.Playlist;
+import tech.makers.aceplay.playlist.PlaylistDto;
 
-import static org.springframework.http.HttpStatus.NOT_FOUND;
+import java.util.HashSet;
+import java.util.Set;
 
 // https://www.youtube.com/watch?v=5r3QU09v7ig&t=2410s
 @RestController
@@ -13,29 +15,43 @@ public class TracksController {
 
   @Autowired private TracksService tracksService;
 
+  @Autowired TrackMapper trackMapper;
+
   @GetMapping("/api/tracks")
-  public Iterable<Track> index() {
-    return tracksService.index();
+  public Set<TrackDto> index() {
+    Set<TrackDto> trackDtos = new HashSet<>();
+    tracksService.index().forEach(track -> trackDtos.add(convertToDto(track)));
+    return trackDtos;
   }
 
   @PostMapping("/api/tracks")
-  public Track createAndAddUser(@RequestBody Track track) {
+  public TrackDto createAndAddUser(@RequestBody TrackDto trackDto) {
+      Track track = convertToEntity(trackDto);
       tracksService.validateAndSaveTrack(track);
-      return tracksService.addUserOfTrack(track.getId());
+      tracksService.addUserOfTrack(track.getId());
+      return convertToDto(track);
   }
 
   @PatchMapping("/api/tracks/{id}")
-  public Track update(@PathVariable Long id, @RequestBody Track newTrack) {
-    return tracksService.updateTrack(id, newTrack);
+  public TrackDto update(@PathVariable Long id, @RequestBody TrackDto newTrackDto) {
+    return convertToDto(tracksService.updateTrack(id, convertToEntity(newTrackDto)));
   }
 
   @PutMapping("/api/tracks/{id}")
-  public Track addUserOfTrack(@PathVariable Long id) {
-    return tracksService.addUserOfTrack(id);
+  public TrackDto addUserOfTrack(@PathVariable Long id) {
+    return convertToDto(tracksService.addUserOfTrack(id));
   }
 
   @DeleteMapping("/api/tracks/{id}")
   public void delete(@PathVariable Long id) {
     tracksService.deleteTrack(id);
+  }
+
+  private Track convertToEntity(TrackDto trackDto) {
+    return trackMapper.dtoToTrack(trackDto);
+  }
+
+  private TrackDto convertToDto(Track track) {
+    return trackMapper.trackToDto(track);
   }
 }
