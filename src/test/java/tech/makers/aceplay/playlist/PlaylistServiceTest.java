@@ -2,19 +2,24 @@ package tech.makers.aceplay.playlist;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InOrder;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.web.server.ResponseStatusException;
 import tech.makers.aceplay.playlist_track.PlaylistTrack;
 import tech.makers.aceplay.playlist_track.PlaylistTrackService;
 import tech.makers.aceplay.track.Track;
 import tech.makers.aceplay.track.TrackRepository;
+import tech.makers.aceplay.user.User;
+import tech.makers.aceplay.user.UserService;
 
 import java.util.Optional;
 import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
@@ -31,6 +36,12 @@ class PlaylistServiceTest {
     private TrackRepository mockTrackRepository;
     @Mock
     private PlaylistTrackService mockPlaylistTrackService;
+    @Mock
+    private UserService mockUserService;
+    @Mock
+    private User mockUser;
+    @Mock
+    private Playlist mockPlaylist;
 
     @Test
     void getPlaylist_ReturnsAllPlaylists() {
@@ -43,34 +54,43 @@ class PlaylistServiceTest {
 
     @Test
     void createPlaylist_WhenPlaylistNameValid_SavesNewPlaylist() {
-        Playlist playlistToSave = new Playlist("My first playlist");
-        when(mockPlaylistRepository.save(any(Playlist.class))).thenReturn(playlistToSave);
+        when(mockPlaylist.getName()).thenReturn("My first playlist");
+        when(mockUserService.getAuthenticatedUser()).thenReturn(mockUser);
+        when(mockPlaylistRepository.save(mockPlaylist)).thenReturn(mockPlaylist);
+        InOrder inOrder = inOrder(mockUserService, mockPlaylist, mockPlaylistRepository);
 
-        Playlist actual = playlistService.createPlaylist(playlistToSave);
+        Playlist actual = playlistService.createPlaylist(mockPlaylist);
 
-        assertThat(actual).usingRecursiveComparison().isEqualTo(playlistToSave);
-        verify(mockPlaylistRepository, times(1)).save(any(Playlist.class));
+        assertSame(mockPlaylist, actual);
+        assertThat(actual).usingRecursiveComparison().isEqualTo(mockPlaylist);
+
+        inOrder.verify(mockUserService, times(1)).getAuthenticatedUser();
+        inOrder.verify(mockPlaylist, times(1)).setOwner(mockUser);
+        inOrder.verify(mockPlaylistRepository, times(1)).save(mockPlaylist);
+        verifyNoMoreInteractions(mockUserService);
+        verifyNoMoreInteractions(mockPlaylist);
         verifyNoMoreInteractions(mockPlaylistRepository);
     }
 
     @Test
     void createPlaylist_WhenPlaylistNameNotValid_ThrowsError() {
-        Playlist playlistToSave = new Playlist("");
-        assertThrows(IllegalArgumentException.class, () -> playlistService.createPlaylist(playlistToSave));
+        when(mockPlaylist.getName()).thenReturn("");
 
-        verify(mockPlaylistRepository, times(0)).save(any(Playlist.class));
+        assertThrows(IllegalArgumentException.class, () -> playlistService.createPlaylist(mockPlaylist));
+
+        verify(mockPlaylistRepository, times(0)).save(mockPlaylist);
         verifyNoMoreInteractions(mockPlaylistRepository);
     }
 
     @Test
     void getPlaylistById_WhenPlaylistExists_FindsAndReturnsPlaylist() {
-        Playlist expectedPlaylist = new Playlist("Another great playlist");
-        when(mockPlaylistRepository.findById(anyLong())).thenReturn(Optional.of(expectedPlaylist));
+        Long mockId = 1L;
+        when(mockPlaylistRepository.findById(mockId)).thenReturn(Optional.of(mockPlaylist));
 
-        Playlist actual = playlistService.getPlaylistById(getRandomLong());
+        Playlist actual = playlistService.getPlaylistById(mockId);
 
-        assertThat(actual).usingRecursiveComparison().isEqualTo(expectedPlaylist);
-        verify(mockPlaylistRepository, times(1)).findById(anyLong());
+        assertThat(actual).usingRecursiveComparison().isEqualTo(mockPlaylist);
+        verify(mockPlaylistRepository, times(1)).findById(mockId);
         verifyNoMoreInteractions(mockPlaylistRepository);
     }
 
