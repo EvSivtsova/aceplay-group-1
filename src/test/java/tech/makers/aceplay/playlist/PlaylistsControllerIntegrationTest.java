@@ -222,7 +222,7 @@ class PlaylistsControllerIntegrationTest {
   @Test
   @WithMockUser
   void WhenLoggedIn_DeletePlaylist_DeletesPlaylistTracks() throws Exception {
-    Track originalTrack = trackRepository.save(new Track("Title", "Artist"));
+    Track originalTrack = trackRepository.save(new Track("Title", "Artist", "https://example.org/"));
     Playlist playlist = repository.save(new Playlist("My Playlist"));
     PlaylistTrack playlistTrack = playlistTrackRepository.save(new PlaylistTrack(playlist, originalTrack));
 

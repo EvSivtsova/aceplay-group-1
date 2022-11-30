@@ -15,6 +15,7 @@ import tech.makers.aceplay.track.TrackRepository;
 import tech.makers.aceplay.user.User;
 import tech.makers.aceplay.user.UserService;
 
+import java.net.MalformedURLException;
 import java.util.Optional;
 import java.util.Set;
 
@@ -129,11 +130,11 @@ class PlaylistServiceTest {
     }
 
     @Test
-    void addTrackToPlaylist_WhenPlaylistExists_AndTrackExists_SavesTrackToPlaylist() {
+    void addTrackToPlaylist_WhenPlaylistExists_AndTrackExists_SavesTrackToPlaylist() throws MalformedURLException {
         Playlist expectedPlaylist = new Playlist("Another great playlist");
         when(mockPlaylistRepository.findById(anyLong())).thenReturn(Optional.of(expectedPlaylist));
 
-        Track expectedTrack = new Track("Track Title", "Track Artist");
+        Track expectedTrack = new Track("Track Title", "Track Artist", "https://example.org/");
         when(mockTrackRepository.findById(null)).thenReturn(Optional.of(expectedTrack));
 
         PlaylistTrack expectedPlaylistTrack = new PlaylistTrack(expectedPlaylist, expectedTrack);

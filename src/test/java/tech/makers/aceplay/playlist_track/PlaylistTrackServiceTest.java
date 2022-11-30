@@ -10,6 +10,7 @@ import org.springframework.web.server.ResponseStatusException;
 import tech.makers.aceplay.playlist.Playlist;
 import tech.makers.aceplay.track.Track;
 
+import java.net.MalformedURLException;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -30,9 +31,9 @@ class PlaylistTrackServiceTest {
     private Track track;
 
     @BeforeEach
-    public void setup() {
+    public void setup() throws MalformedURLException {
         playlist = new Playlist("playlist name");
-        track = new Track("title", "artist");
+        track = new Track("title", "artist", "https://example.org/");
     }
 
     @Test

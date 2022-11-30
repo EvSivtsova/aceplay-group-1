@@ -37,11 +37,6 @@ public class Track {
     this.artist = artist;
     this.publicUrl = publicUrl;
   }
-  public Track(String title, String artist) {
-    this.title = title;
-    this.artist = artist;
-    this.publicUrl = publicUrl;
-  }
 
   public Track(String title, String artist, String publicUrl) throws MalformedURLException {
     this(title, artist, new URL(publicUrl));
