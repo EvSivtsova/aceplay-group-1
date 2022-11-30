@@ -7,9 +7,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.test.annotation.DirtiesContext;
-import tech.makers.aceplay.user.User;
-import tech.makers.aceplay.user.UserDetailsServiceImpl;
-import tech.makers.aceplay.user.UserRepository;
 
 import static org.junit.jupiter.api.Assertions.*;
 

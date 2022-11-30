@@ -3,6 +3,7 @@ package tech.makers.aceplay.track;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
+import tech.makers.aceplay.user.UserService;
 
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 
@@ -14,6 +15,9 @@ public class TracksService {
     public Iterable<Track> index() {
         return trackRepository.findAll();
     }
+
+    @Autowired
+    private UserService userService;
 
     public Track validateAndSaveTrack(Track track) {
         if (track.getTitle().equals(""))
@@ -31,6 +35,12 @@ public class TracksService {
         track.setArtist(newTrack.getArtist());
         trackRepository.save(track);
         return track;
+    }
+
+    public Track addUserOfTrack(Long id) {
+        Track track = retrieveTrackWithId(id);
+        track.getUsers().add(userService.getAuthenticatedUser());
+        return trackRepository.save(track);
     }
 
     public void deleteTrack(Long id) {

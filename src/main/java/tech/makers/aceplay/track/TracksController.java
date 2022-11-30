@@ -19,13 +19,19 @@ public class TracksController {
   }
 
   @PostMapping("/api/tracks")
-  public Track create(@RequestBody Track track) {
-      return tracksService.validateAndSaveTrack(track);
+  public Track createAndAddUser(@RequestBody Track track) {
+      tracksService.validateAndSaveTrack(track);
+      return tracksService.addUserOfTrack(track.getId());
   }
 
   @PatchMapping("/api/tracks/{id}")
   public Track update(@PathVariable Long id, @RequestBody Track newTrack) {
     return tracksService.updateTrack(id, newTrack);
+  }
+
+  @PutMapping("/api/tracks/{id}")
+  public Track addUserOfTrack(@PathVariable Long id) {
+    return tracksService.addUserOfTrack(id);
   }
 
   @DeleteMapping("/api/tracks/{id}")
