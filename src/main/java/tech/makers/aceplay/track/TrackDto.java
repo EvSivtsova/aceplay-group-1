@@ -12,23 +12,12 @@ public class TrackDto {
 
   private URL publicUrl;
 
-  public TrackDto() { }
-
-  public TrackDto(String title, String artist, URL publicUrl) {
-    this.title = title;
-    this.artist = artist;
-    this.publicUrl = publicUrl;
-  }
-
-  public TrackDto(Long id, String title, String artist, URL publicUrl) {
-    this.id = id;
-    this.title = title;
-    this.artist = artist;
-    this.publicUrl = publicUrl;
-  }
+  public TrackDto() {}
 
   public TrackDto(String title, String artist, String publicUrl) throws MalformedURLException {
-    this(title, artist, new URL(publicUrl));
+    this.title = title;
+    this.artist = artist;
+    this.publicUrl = new URL(publicUrl);
   }
 
   public Long getId() {
