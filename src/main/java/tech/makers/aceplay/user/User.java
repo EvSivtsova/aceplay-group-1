@@ -25,9 +25,6 @@ public class User implements UserDetails {
 
   private String password;
 
-  @ManyToMany(mappedBy = "users")
-  private Set<Track> personalLibrary;
-
   protected User() {}
 
   public User(String username, String password) {

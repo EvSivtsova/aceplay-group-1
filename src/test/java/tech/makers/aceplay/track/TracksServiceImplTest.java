@@ -10,9 +10,7 @@ import tech.makers.aceplay.user.User;
 import tech.makers.aceplay.user.UserService;
 
 import java.net.MalformedURLException;
-import java.util.ArrayList;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -121,5 +119,17 @@ public class TracksServiceImplTest {
         assertEquals(mockUser, updatedUsers.iterator().next());
 
         verify(mockRepository).save(any(Track.class));
+    }
+
+    @Test
+    public void userLibraryIndex_onlyReturnsTracksInUserLibrary()
+            throws MalformedURLException {
+        Set<Track> mockLibrary = new HashSet<>();
+        mockLibrary.add(mockTrack);
+        when(mockRepository.findByUsers(mockUser)).thenReturn(mockLibrary);
+        when(mockUserService.getAuthenticatedUser()).thenReturn(mockUser);
+        assertTrue(tracksService.userLibraryIndex().contains(mockTrack));
+        verify(mockUserService).getAuthenticatedUser();
+        verify(mockRepository).findByUsers(mockUser);
     }
 }
