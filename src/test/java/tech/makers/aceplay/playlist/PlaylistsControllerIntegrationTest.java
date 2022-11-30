@@ -62,17 +62,15 @@ class PlaylistsControllerIntegrationTest {
     Track track = trackRepository.save(new Track("Title", "Artist", "https://example.org/"));
     Playlist playlist = repository.save(new Playlist("My Playlist"));
     PlaylistTrack playlistTrack = playlistTrackRepository.save(new PlaylistTrack(playlist, track));
-    repository.save(new Playlist("Their Playlist"));
 
     mvc.perform(MockMvcRequestBuilders.get("/api/playlists").contentType(MediaType.APPLICATION_JSON))
         .andExpect(status().isOk())
         .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-        .andExpect(jsonPath("$", hasSize(2)))
+        .andExpect(jsonPath("$", hasSize(1)))
         .andExpect(jsonPath("$[0].name").value("My Playlist"))
         .andExpect(jsonPath("$[0].tracks[0].track.title").value("Title"))
         .andExpect(jsonPath("$[0].tracks[0].track.artist").value("Artist"))
-        .andExpect(jsonPath("$[0].tracks[0].track.publicUrl").value("https://example.org/"))
-        .andExpect(jsonPath("$[1].name").value("Their Playlist"));
+        .andExpect(jsonPath("$[0].tracks[0].track.publicUrl").value("https://example.org/"));
   }
 
   @Test
