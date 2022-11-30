@@ -5,6 +5,8 @@ import org.springframework.web.bind.annotation.*;
 import tech.makers.aceplay.track.Track;
 
 import java.text.ParseException;
+import java.util.HashSet;
+import java.util.Set;
 
 // https://www.youtube.com/watch?v=vreyOZxdb5Y&t=0s
 @RestController
@@ -15,16 +17,16 @@ public class PlaylistsController {
   @Autowired PlaylistMapper playlistMapper;
 
   @GetMapping("/api/playlists")
-  public Iterable<Playlist> playlists() {
-  ///to add conversion
-    return playlistService.getPlaylists();
+  public Set<PlaylistDto> playlists() {
+    Set<PlaylistDto> playlistDtos = new HashSet<>();
+    playlistService.getPlaylists().forEach(playlist -> playlistDtos.add(convertToDto(playlist)));
+    return playlistDtos;
   }
 
   @PostMapping("/api/playlists")
   public PlaylistDto create(@RequestBody PlaylistDto playlistDTO) {
     Playlist playlist = convertToEntity(playlistDTO);
-    PlaylistDto playlistDto = convertToDto(playlistService.createPlaylist(playlist));
-    return playlistDto;
+    return convertToDto(playlistService.createPlaylist(playlist));
   }
 
   @GetMapping("/api/playlists/{id}")
