@@ -2,8 +2,6 @@ package tech.makers.aceplay.track;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import tech.makers.aceplay.playlist.Playlist;
-import tech.makers.aceplay.playlist.PlaylistDto;
 
 import java.util.HashSet;
 import java.util.Set;

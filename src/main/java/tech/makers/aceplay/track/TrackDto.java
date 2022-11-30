@@ -1,10 +1,7 @@
 package tech.makers.aceplay.track;
 
-import tech.makers.aceplay.user.User;
-
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.Set;
 
 public class TrackDto {
   private Long id;
@@ -14,8 +11,6 @@ public class TrackDto {
   private String artist;
 
   private URL publicUrl;
-
-  private Set<User> users;
 
   public TrackDto() { }
 
@@ -67,14 +62,6 @@ public class TrackDto {
   public void setPublicUrl(String publicUrl) throws MalformedURLException {
     this.publicUrl = new URL(publicUrl);
   }
-
-//  public void setUsers(Set<User> users) {
-//    this.users = users;
-//  }
-//
-//  public Set<User> getUsers() {
-//    return users;
-//  }
 
   public void setPublicUrl(URL publicUrl) {
     this.publicUrl = publicUrl;
