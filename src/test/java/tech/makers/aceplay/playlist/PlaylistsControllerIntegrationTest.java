@@ -8,6 +8,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
@@ -15,6 +16,8 @@ import tech.makers.aceplay.playlist_track.PlaylistTrack;
 import tech.makers.aceplay.playlist_track.PlaylistTrackRepository;
 import tech.makers.aceplay.track.Track;
 import tech.makers.aceplay.track.TrackRepository;
+import tech.makers.aceplay.user.User;
+import tech.makers.aceplay.user.UserRepository;
 
 import java.util.*;
 
@@ -36,6 +39,7 @@ class PlaylistsControllerIntegrationTest {
   @Autowired private PlaylistRepository repository;
 
   @Autowired private PlaylistTrackRepository playlistTrackRepository;
+  @Autowired private UserRepository userRepository;
 
   @Test
   void WhenLoggedOut_PlaylistsIndexReturnsForbidden() throws Exception {
@@ -114,6 +118,9 @@ class PlaylistsControllerIntegrationTest {
   @Test
   @WithMockUser
   void WhenLoggedIn_PlaylistPostCreatesNewPlaylist() throws Exception {
+    User user = new User("user", "password");
+    userRepository.save(user);
+
     mvc.perform(
             MockMvcRequestBuilders.post("/api/playlists")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -124,6 +131,7 @@ class PlaylistsControllerIntegrationTest {
         .andExpect(jsonPath("$.tracks").value(IsEmptyCollection.empty()));
 
     Playlist playlist = repository.findFirstByOrderByIdAsc();
+    assertEquals("user", playlist.getOwner().getUsername());
     assertEquals("My Playlist Name", playlist.getName());
     assertEquals(Set.of(), playlist.getTracks());
   }
