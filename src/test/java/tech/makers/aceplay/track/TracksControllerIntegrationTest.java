@@ -230,9 +230,10 @@ class TracksControllerIntegrationTest {
   @Test
   @WithMockUser
   void  WhenLoggedIn_userOnlySeesTheirSavedSongs() throws Exception {
-    Track track = repository.save(new Track("Blue Line Swinger", "Yo La Tengo", "https://example.org/track.mp3"));
+    Track track1 = repository.save(new Track("Blue Line Swinger", "Yo La Tengo", "https://example.org/track1.mp3"));
+    Track track2 = repository.save(new Track("Some Song", "Artist Two", "https://example.org/track2.mp3"));
     User user = userRepository.save(new User("user", "password"));
-    tracksService.addUserOfTrack(track.getId());
+    tracksService.addUserOfTrack(track1.getId());
     mvc.perform(
             MockMvcRequestBuilders
                     .get("/api/tracks/userLibraryIndex")
@@ -241,6 +242,7 @@ class TracksControllerIntegrationTest {
             .andExpect(status().isOk())
             .andExpect(jsonPath("$[0].title").value("Blue Line Swinger"))
             .andExpect(jsonPath("$[0].artist").value("Yo La Tengo"))
-            .andExpect(jsonPath("$[0].publicUrl").value("https://example.org/track.mp3"));
+            .andExpect(jsonPath("$[0].publicUrl").value("https://example.org/track1.mp3"))
+            .andExpect(jsonPath("$[1]").doesNotExist());
   }
 }
