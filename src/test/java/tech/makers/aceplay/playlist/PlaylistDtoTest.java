@@ -1,7 +1,7 @@
 package tech.makers.aceplay.playlist;
 
 import org.junit.jupiter.api.Test;
-import tech.makers.aceplay.playlist_track.PlaylistTrack;
+import tech.makers.aceplay.track.TrackDto;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -19,9 +19,9 @@ class PlaylistDtoTest {
 
   @Test
   void testThreeParameterConstructor() {
-    PlaylistTrack mockPlaylistTrack1 = mock(PlaylistTrack.class);
-    PlaylistTrack mockPlaylistTrack2 = mock(PlaylistTrack.class);
-    Set<PlaylistTrack> mockTracks = new HashSet<>();
+    TrackDto mockPlaylistTrack1 = mock(TrackDto.class);
+    TrackDto mockPlaylistTrack2 = mock(TrackDto.class);
+    Set<TrackDto> mockTracks = new HashSet<>();
     mockTracks.add(mockPlaylistTrack1);
     mockTracks.add(mockPlaylistTrack2);
     Long mockId = 1L;

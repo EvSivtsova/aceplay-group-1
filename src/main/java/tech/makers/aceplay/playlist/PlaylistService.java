@@ -1,9 +1,6 @@
 package tech.makers.aceplay.playlist;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.context.SecurityContext;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 import tech.makers.aceplay.playlist_track.PlaylistTrack;
@@ -11,7 +8,6 @@ import tech.makers.aceplay.playlist_track.PlaylistTrackService;
 import tech.makers.aceplay.track.Track;
 import tech.makers.aceplay.track.TrackRepository;
 import tech.makers.aceplay.user.User;
-import tech.makers.aceplay.user.UserRepository;
 import tech.makers.aceplay.user.UserService;
 
 import static org.springframework.http.HttpStatus.NOT_FOUND;

@@ -1,6 +1,6 @@
 package tech.makers.aceplay.playlist;
 
-import tech.makers.aceplay.playlist_track.PlaylistTrack;
+import tech.makers.aceplay.track.TrackDto;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -9,16 +9,16 @@ public class PlaylistDto {
 
     private Long id;
     private String name;
-    private Set<PlaylistTrack> tracks = new HashSet<>();
+    private Set<TrackDto> tracks = new HashSet<>();
 
     public PlaylistDto(String nameFromUser) {
         this.name = nameFromUser;
     }
 
-    public PlaylistDto(Long idFromDatabase, String nameFromDatabase, Set<PlaylistTrack> tracksFromDatabase) {
+    public PlaylistDto(Long idFromDatabase, String nameFromDatabase, Set<TrackDto> tracksDtos) {
         this.id = idFromDatabase;
         this.name = nameFromDatabase;
-        this.tracks = tracksFromDatabase;
+        this.tracks = tracksDtos;
     }
 
     public Long getId() {
@@ -37,11 +37,11 @@ public class PlaylistDto {
         this.name = nameFromDatabase;
     }
 
-    public Set<PlaylistTrack> getTracks() {
+    public Set<TrackDto> getTracks() {
         return tracks;
     }
 
-    public void setTracks(Set<PlaylistTrack> tracksFromDatabase) {
+    public void setTracks(Set<TrackDto> tracksFromDatabase) {
         this.tracks = tracksFromDatabase;
     }
 }
