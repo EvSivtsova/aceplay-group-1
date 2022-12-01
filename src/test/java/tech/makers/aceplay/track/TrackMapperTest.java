@@ -16,7 +16,6 @@ class TrackMapperTest {
         TrackDto returnedTrackDto = trackMapper.trackToDto(originalTrack);
 
         assertThat(returnedTrackDto).usingRecursiveComparison().isEqualTo(originalTrack);
-
     }
 
     @Test

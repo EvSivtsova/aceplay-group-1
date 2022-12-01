@@ -3,6 +3,8 @@ package tech.makers.aceplay.playlist;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import tech.makers.aceplay.track.Track;
+import tech.makers.aceplay.track.TrackDto;
+import tech.makers.aceplay.track.TrackMapper;
 
 import java.text.ParseException;
 import java.util.HashSet;
@@ -16,6 +18,10 @@ public class PlaylistsController {
 
   @Autowired PlaylistMapper playlistMapper;
 
+  @Autowired
+  TrackMapper trackMapper;
+
+  //TRACKS
   @GetMapping("/api/playlists")
   public Set<PlaylistDto> playlists() {
     Set<PlaylistDto> playlistDtos = new HashSet<>();
@@ -29,14 +35,16 @@ public class PlaylistsController {
     return convertToDto(playlistService.createPlaylist(playlist));
   }
 
+  //TRACKS
   @GetMapping("/api/playlists/{id}")
   public PlaylistDto get(@PathVariable Long id) {
     return convertToDto(playlistService.getPlaylistById(id));
   }
 
   @PutMapping("/api/playlists/{playlistId}/tracks")
-  public Track addTrack(@PathVariable Long playlistId, @RequestBody TrackIdentifierDto trackIdentifierDto) {
-    return playlistService.addTrackToPlaylist(playlistId, trackIdentifierDto);
+  public TrackDto addTrack(@PathVariable Long playlistId, @RequestBody TrackIdentifierDto trackIdentifierDto) {
+    Track trackAdded = playlistService.addTrackToPlaylist(playlistId, trackIdentifierDto);
+    return trackMapper.trackToDto(trackAdded);
   }
 
   @DeleteMapping("/api/playlists/{id}")
