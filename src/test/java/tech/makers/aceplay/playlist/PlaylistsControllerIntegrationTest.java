@@ -68,9 +68,9 @@ class PlaylistsControllerIntegrationTest {
         .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
         .andExpect(jsonPath("$", hasSize(1)))
         .andExpect(jsonPath("$[0].name").value("My Playlist"))
-        .andExpect(jsonPath("$[0].tracks[0].track.title").value("Title"))
-        .andExpect(jsonPath("$[0].tracks[0].track.artist").value("Artist"))
-        .andExpect(jsonPath("$[0].tracks[0].track.publicUrl").value("https://example.org/"));
+        .andExpect(jsonPath("$[0].tracks[0].title").value("Title"))
+        .andExpect(jsonPath("$[0].tracks[0].artist").value("Artist"))
+        .andExpect(jsonPath("$[0].tracks[0].publicUrl").value("https://example.org/"));
   }
 
   @Test
@@ -98,9 +98,9 @@ class PlaylistsControllerIntegrationTest {
         .andExpect(status().isOk())
         .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
         .andExpect(jsonPath("$.name").value("My Playlist"))
-        .andExpect(jsonPath("$.tracks[0].track.title").value("Title"))
-        .andExpect(jsonPath("$.tracks[0].track.artist").value("Artist"))
-        .andExpect(jsonPath("$.tracks[0].track.publicUrl").value("https://example.org/"));
+        .andExpect(jsonPath("$.tracks[0].title").value("Title"))
+        .andExpect(jsonPath("$.tracks[0].artist").value("Artist"))
+        .andExpect(jsonPath("$.tracks[0].publicUrl").value("https://example.org/"));
   }
 
   @Test
